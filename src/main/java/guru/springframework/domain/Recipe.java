@@ -1,6 +1,7 @@
 package guru.springframework.domain;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -12,11 +13,18 @@ public class Recipe {
 
     private String description;
     private Integer prepTime;
-    private Integer coookTime;
+    private Integer cookTime;
     private Integer servings;
     private String source;
     private String url;
+
+    /* Fixed with Lob
+    Caused by: org.h2.jdbc.JdbcSQLException: Value too long for column "DIRECTIONS VARCHAR(255)": "STRINGDECODE('1 Cut avocado, remove flesh: Cut the avocados in half. Remove seed. Score the inside of the avocado with a blunt k... (1348)";
+    SQL statement: insert into recipe (id, cook_time, description, difficulty, directions, image, notes_id, prep_time, servings, source, url) values (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) [22001-197]
+    */
+    @Lob
     private String directions;
+
 
     //TODO: add
     //private Difficulty difficulty;
@@ -24,7 +32,7 @@ public class Recipe {
 
     //NOTE: mappedBy specifies the target property in ingredient Entity
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "recipe")
-    private Set<Ingredient> ingredients;
+    private Set<Ingredient> ingredients = new HashSet<>();
 
     @Lob
     private Byte[] image;
@@ -38,7 +46,7 @@ public class Recipe {
     @ManyToMany
     @JoinTable(name = "recipe_category", joinColumns = @JoinColumn(name = "recipe_id"),
             inverseJoinColumns = @JoinColumn(name = "catergory_id"))
-    private Set<Category> categories;
+    private Set<Category> categories = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -64,12 +72,12 @@ public class Recipe {
         this.prepTime = prepTime;
     }
 
-    public Integer getCoookTime() {
-        return coookTime;
+    public Integer getCookTime() {
+        return cookTime;
     }
 
-    public void setCoookTime(Integer coookTime) {
-        this.coookTime = coookTime;
+    public void setCookTime(Integer cookTime) {
+        this.cookTime = cookTime;
     }
 
     public Integer getServings() {
