@@ -1,8 +1,13 @@
 package guru.springframework.domain;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 
+@Data
+@EqualsAndHashCode(exclude = {"recipe"})
 @Entity
 public class Ingredient {
 
@@ -31,7 +36,7 @@ public class Ingredient {
         this.uom = uom;
         this.recipe = recipe;
     }
-
+/*
     public Long getId() {
         return id;
     }
@@ -62,6 +67,34 @@ public class Ingredient {
 
     public void setRecipe(Recipe recipe) {
         this.recipe = recipe;
-    }
+    }*/
 
 }
+
+/*
+Fix: exclude the bidirectional reference from HashCode implementation by lombok
+Problem:  Recipe <--> Ingredient 1:Many relationship causes circular references!
+
+java.lang.StackOverflowError: null
+	at guru.springframework.domain.UnitOfMeasure.hashCode(UnitOfMeasure.java:10) ~[classes/:na]
+	at guru.springframework.domain.Ingredient.hashCode(Ingredient.java:9) ~[classes/:na]
+	at java.util.AbstractSet.hashCode(AbstractSet.java:126) ~[na:1.8.0_171]
+	at guru.springframework.domain.Recipe.hashCode(Recipe.java:9) ~[classes/:na]
+	at guru.springframework.domain.Ingredient.hashCode(Ingredient.java:9) ~[classes/:na]
+	at java.util.AbstractSet.hashCode(AbstractSet.java:126) ~[na:1.8.0_171]
+	at guru.springframework.domain.Recipe.hashCode(Recipe.java:9) ~[classes/:na]
+	at guru.springframework.domain.Ingredient.hashCode(Ingredient.java:9) ~[classes/:na]
+	at java.util.AbstractSet.hashCode(AbstractSet.java:126) ~[na:1.8.0_171]
+	at guru.springframework.domain.Recipe.hashCode(Recipe.java:9) ~[classes/:na]
+	at guru.springframework.domain.Ingredient.hashCode(Ingredient.java:9) ~[classes/:na]
+	at java.util.AbstractSet.hashCode(AbstractSet.java:126) ~[na:1.8.0_171]
+	at guru.springframework.domain.Recipe.hashCode(Recipe.java:9) ~[classes/:na]
+	at guru.springframework.domain.Ingredient.hashCode(Ingredient.java:9) ~[classes/:na]
+	at java.util.AbstractSet.hashCode(AbstractSet.java:126) ~[na:1.8.0_171]
+	at guru.springframework.domain.Recipe.hashCode(Recipe.java:9) ~[classes/:na]
+	at guru.springframework.domain.Ingredient.hashCode(Ingredient.java:9) ~[classes/:na]
+	at java.util.AbstractSet.hashCode(AbstractSet.java:126) ~[na:1.8.0_171]
+	at guru.springframework.domain.Recipe.hashCode(Recipe.java:9) ~[classes/:na]
+
+	...
+ */

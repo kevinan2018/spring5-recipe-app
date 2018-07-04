@@ -1,7 +1,12 @@
 package guru.springframework.domain;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 import javax.persistence.*;
 
+@Data
+@EqualsAndHashCode(exclude = {"recipe"})
 @Entity
 public class Notes {
 
@@ -15,7 +20,7 @@ public class Notes {
     @Lob
     private String recipeNotes;
 
-    public Long getId() {
+    /*   public Long getId() {
         return id;
     }
 
@@ -37,6 +42,26 @@ public class Notes {
 
     public void setRecipeNotes(String recipeNotes) {
         this.recipeNotes = recipeNotes;
-    }
+    }*/
 
 }
+
+/*
+Fix: exclude the bidirectional reference from HashCode implementation by lombok
+Problem:  Notes <--> Recipes 1:1 relationship causes circular references!
+
+
+java.lang.StackOverflowError: null
+	at java.util.HashSet.iterator(HashSet.java:173) ~[na:1.8.0_171]
+	at java.util.AbstractSet.hashCode(AbstractSet.java:122) ~[na:1.8.0_171]
+	at guru.springframework.domain.Recipe.hashCode(Recipe.java:9) ~[classes/:na]
+	at guru.springframework.domain.Notes.hashCode(Notes.java:7) ~[classes/:na]
+	at guru.springframework.domain.Recipe.hashCode(Recipe.java:9) ~[classes/:na]
+	at guru.springframework.domain.Notes.hashCode(Notes.java:7) ~[classes/:na]
+	at guru.springframework.domain.Recipe.hashCode(Recipe.java:9) ~[classes/:na]
+	at guru.springframework.domain.Notes.hashCode(Notes.java:7) ~[classes/:na]
+	at guru.springframework.domain.Recipe.hashCode(Recipe.java:9) ~[classes/:na]
+	at guru.springframework.domain.Notes.hashCode(Notes.java:7) ~[classes/:na]
+	at guru.springframework.domain.Recipe.hashCode(Recipe.java:9) ~[classes/:na]
+
+*/
