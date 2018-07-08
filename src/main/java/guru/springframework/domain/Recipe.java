@@ -52,15 +52,19 @@ public class Recipe {
      * setNotes and addIngredient have to be created manually
      */
     public void setNotes(Notes notes) {
-        this.notes = notes;
-        // bidirectional relationship with notes
-        notes.setRecipe(this);
+        if (notes != null) {
+            this.notes = notes;
+            // bidirectional relationship with notes
+            notes.setRecipe(this);
+        }
     }
 
     // bidirectional relationship with ingredient
     public Recipe addIngredient(Ingredient ingredient){
-        ingredient.setRecipe(this);
-        this.ingredients.add(ingredient);
+        if (ingredient != null) {
+            ingredient.setRecipe(this);
+            this.ingredients.add(ingredient);
+        }
         return this;
     }
 
