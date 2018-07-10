@@ -54,7 +54,7 @@ public class RecipeServiceIT {
 
 /*
 Fix: @SpringBootTest: whole spring context
-Problem: @DataJpaTest is ONLY the lightweight spring context
+Problem: @DataJpaTest is ONLY the lightweight spring context which cannot find RecipeService
 
 org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'guru.springframework.services.RecipeServiceIT': Unsatisfied dependency expressed through field 'recipeService'; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'guru.springframework.services.RecipeService' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {@org.springframework.beans.factory.annotation.Autowired(required=true)}
 

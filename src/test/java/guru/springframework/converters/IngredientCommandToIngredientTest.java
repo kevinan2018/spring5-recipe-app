@@ -6,10 +6,8 @@ import guru.springframework.domain.Ingredient;
 import guru.springframework.domain.Recipe;
 import org.junit.Before;
 import org.junit.Test;
-import org.yaml.snakeyaml.events.Event;
 
 import java.math.BigDecimal;
-import java.util.concurrent.ExecutionException;
 
 import static org.junit.Assert.*;
 
@@ -47,7 +45,7 @@ public class IngredientCommandToIngredientTest {
         command.setDescription(DESCRIPTION);
         UnitOfMeasureCommand unitOfMeasureCommand = new UnitOfMeasureCommand();
         unitOfMeasureCommand.setId(UOM_ID);
-        command.setUnitOfMeasure(unitOfMeasureCommand);
+        command.setUom(unitOfMeasureCommand);
 
         //when
         Ingredient ingredient = converter.convert(command);

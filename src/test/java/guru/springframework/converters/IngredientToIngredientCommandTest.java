@@ -49,7 +49,7 @@ public class IngredientToIngredientCommandTest {
         IngredientCommand command = converter.convert(ingredient);
 
         //then
-        assertNull(command.getUnitOfMeasure());
+        assertNull(command.getUom());
         assertEquals(ID_VALUE, command.getId());
         //assertEquals(RECIPE, command.get);
         assertEquals(AMOUNT, command.getAmount());
@@ -75,8 +75,8 @@ public class IngredientToIngredientCommandTest {
         IngredientCommand command = converter.convert(ingredient);
 
         //then
-        assertNotNull(command.getUnitOfMeasure());
-        assertEquals(UOM_ID, command.getUnitOfMeasure().getId());
+        assertNotNull(command.getUom());
+        assertEquals(UOM_ID, command.getUom().getId());
         assertEquals(ID_VALUE, command.getId());
         //assertEquals(RECIPE, command.get);
         assertEquals(AMOUNT, command.getAmount());
