@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" xmlns:th="http://www.thymeleaf.org">
+    <meta charset="UTF-8">
     <title>List Ingredients</title>
 
     <!-- Latest compiled and minified CSS -->
@@ -20,7 +20,7 @@
             th:src="@{/webjars/bootstrap/4.1.1/js/bootstrap.min.js}"></script>
 </head>
 <body>
-<!--/*@thymesVar id="recipe" type="guru.springframework.domain.Recipe"*/-->
+<!--/*@thymesVar id="recipe" type="guru.springframework.domain.RecipeCommand"*/-->
 <!--/*@thymesVar id="ingredients" type="java.util.Set<guru.springframework.commands.IngredientCommand>"*/-->
 <!--/*@thymesVar id="ingredient" type="guru.springframework.commands.IngredientCommand"*/-->
 <div class="container-fluid" style="margin-top: 20px">
@@ -31,9 +31,11 @@
                     <h1 class="panel-title">Ingredients</h1>
                 </div>
                 <div class="panel-body">
-                    <div class="table-responsive" th:if"${not #lists.isEmpty(recipe.ingredients}">
+                    <div class="table-responsive" th:if="${not #lists.isEmpty(recipe.ingredients)}">
                         <table class="table table-hover">
-                            <thead class="thead-inverse">
+                            <!-- table-inverse replaced by *-dark or *-light-->
+                            <!-- thead-inverse replaced by *-dark or *-light-->
+                            <thead class="thead-light">
                                 <tr>
                                     <th>ID</th>
                                     <th>Description</th>
