@@ -46,11 +46,11 @@
             <form th:object="${recipe}" th:action="@{/recipe/}" method="post">
                 <input type="hidden" th:field="*{id}"/>
                 <div class="panel-group">
-                    <div class="panel panel-primary">
-                        <div class="panel-heading">
-                            <h1 class="panel-title">Edit Recipe Informatin</h1>
+                    <div class="card card-primary card-inverse">
+                        <div class="card-header">
+                            <h1 class="card-title">Edit Recipe Informatin</h1>
                         </div>
-                        <dvi class="panel-body">
+                        <dvi class="card-body">
                             <div class="row">
                                 <div class="col-md-3 form-group">
                                     <label>Recipe Description:</label>
@@ -115,8 +115,8 @@
                             </div>
                         </dvi>
                     </div>
-                    <div class="panel panel-primary">
-                        <div class="panel-heading">
+                    <div class="card card-primary card-inverse">
+                        <div class="card-header">
                             <div class="row">
                                 <div class="col-md-11">
                                     <h1 class="panel-title">Ingredients</h1>
@@ -127,7 +127,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="panel-body">
+                    <div class="card-body">
                         <div class="row">
                             <div class="col-md-12">
                                 <ul th:if="${not #lists.isEmpty(recipe.ingredients)}">
@@ -141,11 +141,11 @@
                         </div>
                     </div>
 
-                    <div class="panel panel-primary">
-                        <div class="panel-heading">
-                            <h1 class="panel-title">Directions</h1>
+                    <div class="card card-primary card-inverse">
+                        <div class="card-header">
+                            <h1 class="card-title">Directions</h1>
                         </div>
-                        <div class="panel-body">
+                        <div class="card-body">
                             <div class="row">
                                 <div class="col-md-12 form-group">
                                     <textarea class="form-control" rows="3" th:field="*{directions}"></textarea>
@@ -153,11 +153,11 @@
                             </div>
                         </div>
                     </div>
-                    <div class="panel panel-primary">
-                        <div class="panel-heading">
-                            <h1 class="panel-title">Notes</h1>
+                    <div class="card card-primary card-inverse">
+                        <div class="card-header">
+                            <h1 class="card-title">Notes</h1>
                         </div>
-                        <div class="panel-body">
+                        <div class="card-body">
                             <div class="row">
                                 <div class="col-md-12 form-group">
                                     <textarea class="form-control" rows="3" th:field="*{notes.recipeNotes}"></textarea>

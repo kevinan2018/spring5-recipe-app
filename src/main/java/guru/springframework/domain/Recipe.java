@@ -33,7 +33,7 @@ public class Recipe {
     private Set<Ingredient> ingredients = new HashSet<>();
 
     @Lob
-    private Byte[] image;
+    private Byte[] image; //byte[] can be null, springs team recommends using Byte[] instead!
 
     @Enumerated(value = EnumType.STRING)
     private Difficulty difficulty;

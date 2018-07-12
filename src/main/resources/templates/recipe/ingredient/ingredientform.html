@@ -28,11 +28,11 @@
         <div class="col-md-6 offset-md-3">
             <form th:object="${ingredient}" th:action="@{'/recipe/' + ${ingredient.getRecipeId()} + '/ingredient'}" method="post">
                 <input type="hidden" th:field="*{id}"/>
-                <div class="panel panel-primary">
-                    <div class="panel-heading">
-                        <h1 class="panel-title">Edit Ingredient Information</h1>
+                <div class="card card-primary card-inverse">
+                    <div class="card-header">
+                        <h1 class="card-title">Edit Ingredient Information</h1>
                     </div>
-                    <div class="panel-body">
+                    <div class="card-body">
                         <div class="row">
                             <div class="col-md-3 form-group">
                                 <label>Description:</label>
@@ -54,8 +54,9 @@
                             </div>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-primary">Submit</button>
+
                 </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
             </form>
         </div>
     </div>
