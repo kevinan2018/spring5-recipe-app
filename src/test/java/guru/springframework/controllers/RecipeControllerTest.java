@@ -82,7 +82,7 @@ public class RecipeControllerTest {
     }
 
     @Test
-    public void getnewRecipeFormTest() throws Exception {
+    public void getNewRecipeFormTest() throws Exception {
         RecipeCommand command = new RecipeCommand();
 
         mockMvc.perform(get("/recipe/new"))
@@ -92,7 +92,7 @@ public class RecipeControllerTest {
     }
 
     @Test
-    public void postnewRecipeFormTest() throws Exception {
+    public void postNewRecipeFormTest() throws Exception {
         RecipeCommand command = new RecipeCommand();
         command.setId(2L);
 
@@ -102,9 +102,26 @@ public class RecipeControllerTest {
                     .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                     .param("id", "")
                     .param("description", "some string")
+                    .param("directions", "some string")
         )
                     .andExpect(status().is3xxRedirection())
                     .andExpect(view().name("redirect:/recipe/2/show"));
+    }
+
+    @Test
+    public void postNewRecipeFormValidationFail() throws Exception {
+        RecipeCommand command = new RecipeCommand();
+        command.setId(2L);
+
+        when(recipeService.saveRecipeCommand(any())).thenReturn(command);
+
+        mockMvc.perform(post("/recipe")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("id", "")
+            )
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("recipe"))
+                .andExpect(view().name("recipe/recipeform"));
     }
 
     @Test
@@ -131,3 +148,12 @@ public class RecipeControllerTest {
     }
 
 }
+
+/*
+Fix: param("directions", "some string") //add string value to the directions property in post
+ see RecipeCommand for validation!
+
+17:04:59.833 [main] DEBUG guru.springframework.controllers.RecipeController - Field error in object 'recipe' on field 'directions': rejected value [null];
+codes [NotBlank.recipe.directions,NotBlank.directions,NotBlank.java.lang.String,NotBlank]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [recipe.directions,directions]; arguments []; default message [directions]]; default message [must not be blank]
+
+ */
