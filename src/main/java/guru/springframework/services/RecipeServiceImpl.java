@@ -9,8 +9,6 @@ import guru.springframework.repositories.RecipeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -51,7 +49,7 @@ public class RecipeServiceImpl implements RecipeService {
 
         if (!recipeOptional.isPresent()) {
             //throw new RuntimeException("recipe not found");
-            throw new NotFoundException("Recipe Not Found");
+            throw new NotFoundException("Recipe Not Found. Recipe Id: " + l);
         }
 
         return recipeOptional.get();

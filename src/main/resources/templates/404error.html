@@ -21,10 +21,12 @@
 
 </head>
 <body>
+<!--/*@thymesVar id="exception* type="guru.springframework.exceptions.exception"*/-->
 <div class="container-fluid" style="margin-top: 20px">
     <div class="row">
         <div class="col-md-6 offset-md-3">
             <h1>404 Not Found</h1>
+            <p th:text="${exception.getMessage()}"></p>
         </div>
     </div>
 </div>
