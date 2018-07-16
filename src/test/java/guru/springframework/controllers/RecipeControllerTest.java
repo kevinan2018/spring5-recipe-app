@@ -1,7 +1,10 @@
 package guru.springframework.controllers;
 
 import guru.springframework.commands.RecipeCommand;
+import guru.springframework.converters.RecipeToRecipeCommand;
 import guru.springframework.domain.Recipe;
+import guru.springframework.exceptions.NotFoundException;
+import guru.springframework.repositories.RecipeRepository;
 import guru.springframework.services.RecipeService;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,10 +12,10 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MockMvcBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import static org.junit.Assert.*;
+import java.util.Optional;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.times;
@@ -30,17 +33,19 @@ public class RecipeControllerTest {
     RecipeService recipeService;
 
     RecipeController controller;
+
     MockMvc mockMvc;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
+
         controller = new RecipeController(recipeService);
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 
     @Test
-    public void testGetRecipe() throws Exception {
+    public void getRecipeTest() throws Exception {
 
         Recipe recipe = new Recipe();
         recipe.setId(1L);
@@ -54,8 +59,19 @@ public class RecipeControllerTest {
             .andExpect(view().name("recipe/show"));
     }
 
+    //@Test(expected = NotFoundException.class)
+    //HttpStatus.NOT_FOUND return here, no exception thrown.
     @Test
-    public void testGetnewRecipeForm() throws Exception {
+    public void getRecipeNotFoundTest() throws Exception {
+        when(recipeService.findById(anyLong())).thenThrow(NotFoundException.class);
+
+        mockMvc.perform(get("/recipe/1/show"))
+                .andExpect(status().isNotFound())
+                .andExpect(view().name("404error"));
+    }
+
+    @Test
+    public void getnewRecipeFormTest() throws Exception {
         RecipeCommand command = new RecipeCommand();
 
         mockMvc.perform(get("/recipe/new"))
@@ -65,7 +81,7 @@ public class RecipeControllerTest {
     }
 
     @Test
-    public void testPostnewRecipeForm() throws Exception {
+    public void postnewRecipeFormTest() throws Exception {
         RecipeCommand command = new RecipeCommand();
         command.setId(2L);
 
@@ -81,7 +97,7 @@ public class RecipeControllerTest {
     }
 
     @Test
-    public void testGetUpdateView() throws Exception {
+    public void getUpdateViewTest() throws Exception {
         RecipeCommand command = new RecipeCommand();
         command.setId(2L);
 
@@ -94,7 +110,7 @@ public class RecipeControllerTest {
     }
 
     @Test
-    public void testDeleteAction() throws Exception {
+    public void deleteActionTest() throws Exception {
         //NOTE: limited by HTML, use get to delete, otherwise, javascript is needed!
         mockMvc.perform(get("/recipe/1/delete"))
                 .andExpect(status().is3xxRedirection())
