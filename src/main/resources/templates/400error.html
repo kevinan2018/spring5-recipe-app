@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>404 Not Found</title>
+    <title>Number Format Exception</title>
 
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"
@@ -21,11 +21,11 @@
 
 </head>
 <body>
-<!--/*@thymesVar id="exception" type="guru.springframework.exceptions.exception"*/-->
+<!--/*@thymesVar id="" type="guru.springframework.exceptions"*/-->
 <div class="container-fluid" style="margin-top: 20px">
     <div class="row">
         <div class="col-md-6 offset-md-3">
-            <h1>404 Not Found</h1>
+            <h1>400 Bad Request</h1>
             <p th:text="${exception.getMessage()}"></p>
         </div>
     </div>
