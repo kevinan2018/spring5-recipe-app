@@ -1,0 +1,42 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'jacoco'
+
+group = 'guru.springframework'
+version = '0.0.1-SNAPSHOT'
+
+description = """spring5-recipe-app"""
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+tasks.withType(JavaCompile) {
+	options.encoding = 'UTF-8'
+}
+
+
+
+repositories {
+        
+     maven { url "http://repo.maven.apache.org/maven2" }
+}
+dependencies {
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version:'2.0.3.RELEASE'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-thymeleaf', version:'2.0.3.RELEASE'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version:'2.0.3.RELEASE'
+    compile group: 'org.projectlombok', name: 'lombok', version:'1.16.22'
+    compile group: 'org.webjars', name: 'bootstrap', version:'4.1.1'
+    compile group: 'org.webjars', name: 'jquery', version:'3.3.1-1'
+    compile group: 'com.zaxxer', name: 'HikariCP', version:'2.7.9'
+    compile group: 'mysql', name: 'mysql-connector-java', version:'5.1.46'
+    runtime group: 'org.springframework.boot', name: 'spring-boot-devtools', version:'2.0.3.RELEASE'
+    runtime group: 'com.h2database', name: 'h2', version:'1.4.197'
+    testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version:'2.0.3.RELEASE'
+}
+
+//export test coverage
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        html.enabled false
+    }
+}

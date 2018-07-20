@@ -1,6 +1,5 @@
 package guru.springframework.converters;
 
-import com.sun.org.apache.regexp.internal.RE;
 import guru.springframework.commands.NotesCommand;
 import guru.springframework.domain.Notes;
 import org.junit.Before;

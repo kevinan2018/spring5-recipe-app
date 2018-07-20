@@ -19,6 +19,7 @@ jobs:
     environment:
       # Customize the JVM maximum heap limit
       MAVEN_OPTS: -Xmx3200m
+      TERM: dumb
 
     steps:
       - checkout
@@ -26,22 +27,32 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "pom.xml" }}
+          - v1-dependencies-{{ checksum "build.gradle" }}
           # fallback to using the latest cache if no exact match is found
           - v1-dependencies-
 
-      - run: mvn dependency:go-offline
+      - run: gradle dependencies
 
       - save_cache:
           paths:
             - ~/.m2
-          key: v1-dependencies-{{ checksum "pom.xml" }}
+          key: v1-dependencies-{{ checksum "build.gradle" }}
 
       # run tests! and gen code coverage
-      - run: mvn integration-test clover2:instrument clover2:clover #cobertura:cobertura cannot parse java 8
+      - run: ./gradlew clean test jacocoTestReport
+
+      - run:
+          name: Save test results
+          command: |
+            mkdir -p ~/junit/
+            find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} ~/junit/ \;
+          when: always
 
       - store_test_results:
-          path: target/surefire-reports
+          path: ~/junit
+
+      - store_artifacts:
+          path: ~/junit
 
       - run:
           name: Send to CodeCov
