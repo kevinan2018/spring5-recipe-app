@@ -35,11 +35,11 @@ public class RecipeBootstrap implements ApplicationListener<ContextRefreshedEven
     @Transactional
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
         recipeRepository.saveAll(getRecipes());
-        log.debug("Loading Bootstrap Data");
+        log.debug("Saved recipes in repository.");
     }
 
     private List<Recipe> getRecipes(){
-        log.debug("getReceipe called");
+        log.debug("getRecipes() called");
 
         List<Recipe> recipes = new ArrayList<>(2);
 
@@ -163,7 +163,7 @@ public class RecipeBootstrap implements ApplicationListener<ContextRefreshedEven
         guacRecipe.addIngredient(new Ingredient("ripe tomato, seeds and pulp removed, chopped", new BigDecimal(.5), eachUom));
 
 
-        log.debug("add categories for guacRecipe");
+        //log.debug("add categories for guacRecipe");
 
         guacRecipe.getCategories().add(americanCategory);
         guacRecipe.getCategories().add(mexicanCategory);
@@ -174,7 +174,7 @@ public class RecipeBootstrap implements ApplicationListener<ContextRefreshedEven
 
         recipes.add(guacRecipe);
 
-        log.debug("add guacRecipe");
+        //log.debug("add guacRecipe");
 
         //Yummy Tacos
         Recipe tacosRecipe = new Recipe();
@@ -242,7 +242,7 @@ public class RecipeBootstrap implements ApplicationListener<ContextRefreshedEven
 
         recipes.add(tacosRecipe);
 
-        log.debug("getRecipe done");
+        log.debug("getRecipes() done");
 
         return recipes;
     }
