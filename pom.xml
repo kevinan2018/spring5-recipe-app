@@ -53,7 +53,7 @@
             <artifactId>lombok</artifactId>
         </dependency>
 
-        <!--
+        <!-- upgrade to 4.1.1
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>bootstrap</artifactId>
@@ -109,6 +109,8 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <!-- cobertura cannot parse java 8 syntax
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>cobertura-maven-plugin</artifactId>
@@ -122,6 +124,7 @@
                     <check />
                 </configuration>
             </plugin>
+            -->
 
             <plugin>
                 <groupId>com.atlassian.maven.plugins</groupId>
@@ -130,6 +133,9 @@
                     <generateHtml>true</generateHtml>
                     <generatePdf>false</generatePdf>
                     <generateXml>true</generateXml>
+                    <excludes>
+                        <exclude>**/test/java</exclude>
+                    </excludes>
                 </configuration>
                 <executions>
                     <execution>

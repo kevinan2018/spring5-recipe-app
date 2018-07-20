@@ -38,7 +38,7 @@ jobs:
           key: v1-dependencies-{{ checksum "pom.xml" }}
 
       # run tests! and gen code coverage
-      - run: mvn integration-test clover2:instrument clover2:clover #cobertura:cobertura
+      - run: mvn integration-test clover2:instrument clover2:clover #cobertura:cobertura cannot parse java 8
 
       - store_test_results:
           path: target/surefire-reports
