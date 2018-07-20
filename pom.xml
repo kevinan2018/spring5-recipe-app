@@ -134,7 +134,7 @@
                     <generatePdf>false</generatePdf>
                     <generateXml>true</generateXml>
                     <excludes>
-                        <exclude>**/test/java</exclude>
+                        <exclude>**/test/java/**/*.java</exclude>
                     </excludes>
                 </configuration>
                 <executions>
