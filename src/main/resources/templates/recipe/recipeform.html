@@ -164,6 +164,7 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-12">
+                                <!-- jpa rebind ingredient after post operation -->
                                 <ul th:if="${not #lists.isEmpty(recipe.ingredients)}">
                                     <li th:remove="all">1 Cup of mile</li>
                                     <li th:remove="all">1 Teaspoon of chocolate</li>
@@ -171,6 +172,16 @@
                                         ' ' + ingredient.uom.description +
                                         ' - ' + ingredient.getDescription()) }">1 Teaspoon of sugar</li>
                                 </ul>
+                                <!-- Rebind the field for mongo db manually -->
+                                <div th:each="ingredientEach, idx : ${recipe.ingredients}">
+                                    <input type="hidden" th:field="*{ingredients[__${idx.index}__].id}" />
+                                    <input type="hidden" th:field="*{ingredients[__${idx.index}__].description}" />
+                                    <input type="hidden" th:field="*{ingredients[__${idx.index}__].amount}" />
+                                    <input type="hidden" th:field="*{ingredients[__${idx.index}__].uom.id}" />
+                                </div>
+                                <div th:each="catEach, idx : ${recipe.categories}">
+                                    <input type="hidden" th:field="*{categories[__${idx.index}__].id}" />
+                                </div>
                             </div>
                         </div>
                     </div>

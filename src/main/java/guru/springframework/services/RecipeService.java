@@ -3,16 +3,18 @@ package guru.springframework.services;
 import guru.springframework.commands.RecipeCommand;
 import guru.springframework.domain.Recipe;
 
+import java.util.List;
 import java.util.Set;
 
 public interface RecipeService {
-    Set<Recipe> getRecipes();
+    //Set<Recipe> getRecipes();
+    List<Recipe> getRecipes();
 
-    Recipe findById(Long l);
+    Recipe findById(String l);
 
-    RecipeCommand findCommandById(Long l);
+    RecipeCommand findCommandById(String l);
 
     RecipeCommand saveRecipeCommand(RecipeCommand command);
 
-    void deleteById(Long idToDelete);
+    void deleteById(String idToDelete);
 }

@@ -8,11 +8,9 @@ import guru.springframework.exceptions.NotFoundException;
 import guru.springframework.repositories.RecipeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+//import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -31,10 +29,12 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public Set<Recipe> getRecipes() {
-        log.debug("I'm in the service");
+    public List<Recipe> getRecipes() {
+        log.debug("Get recipe list");
 
-        Set<Recipe> recipeSet = new HashSet<>();
+        //NOTE: set forEach might return elements in different order among multiple calls
+        //Set<Recipe> recipeSet = new HashSet<>();
+        List<Recipe> recipeSet = new ArrayList<>();
 
         //recipeRepository.findAll().iterator().forEachRemaining(recipeSet::add);
         recipeRepository.findAll().forEach(recipeSet::add);
@@ -43,7 +43,7 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public Recipe findById(Long l) {
+    public Recipe findById(String l) {
 
         Optional<Recipe> recipeOptional = recipeRepository.findById(l);
 
@@ -56,13 +56,13 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    @Transactional
-    public RecipeCommand findCommandById(Long l) {
+    //@Transactional
+    public RecipeCommand findCommandById(String l) {
         return recipeToRecipeCommand.convert(findById(l));
     }
 
     @Override
-    @Transactional
+    //@Transactional
     public RecipeCommand saveRecipeCommand(RecipeCommand command) {
         // convert creates/new a new object, just a POJO object
         Recipe detachedRecipe = recipeCommandToRecipe.convert(command);
@@ -74,7 +74,7 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public void deleteById(Long idToDelete) {
+    public void deleteById(String idToDelete) {
         recipeRepository.deleteById(idToDelete);
     }
 

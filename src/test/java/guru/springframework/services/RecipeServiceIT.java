@@ -32,7 +32,7 @@ public class RecipeServiceIT {
     @Autowired
     RecipeToRecipeCommand recipeToRecipeCommand;
 
-    @Transactional
+    //@Transactional
     @Test
     public void testSaveOfDescription() throws Exception {
         //given
@@ -51,6 +51,31 @@ public class RecipeServiceIT {
         assertEquals(testRecipe.getIngredients().size(), savedRecipeCommand.getIngredients().size());
     }
 }
+/*
+Fix: remove @Transactional from test because mongo db has no transaction
+
+*java.lang.IllegalStateException: Failed to retrieve PlatformTransactionManager for @Transactional test:
+* [DefaultTestContext@28f2a10f testClass = RecipeServiceIT, testInstance = guru.springframework.services.RecipeServiceIT@4262fdeb,
+* testMethod = testSaveOfDescription@RecipeServiceIT, testException = [null],
+* mergedContextConfiguration = [WebMergedContextConfiguration@f736069
+* testClass = RecipeServiceIT, locations = '{}',
+* classes = '{class guru.springframework.Spring5MongoRecipeAppApplication}',
+* contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}',
+* propertySourceProperties = '{org.springframework.boot.test.context.SpringBootTestContextBootstrapper=true}',
+* contextCustomizers = set[org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@0,
+*       org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizerFactory$Customizer@2de8284b,
+*       org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@365185bd,
+*       org.springframework.boot.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer@782663d3,
+*       org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0,
+*       org.springframework.boot.test.web.client.TestRestTemplateContextCustomizer@77846d2c],
+* resourceBasePath = 'src/main/webapp', contextLoader = 'org.springframework.boot.test.context.SpringBootContextLoader',
+* parent = [null]],
+* attributes = map['org.springframework.test.context.web.ServletTestExecutionListener.activateListener' -> true,
+*       'org.springframework.test.context.web.ServletTestExecutionListener.populatedRequestContextHolder' -> true,
+*       'org.springframework.test.context.web.ServletTestExecutionListener.resetRequestContextHolder' -> true]]
+	at org.springframework.util.Assert.state(Assert.java:94)
+
+ */
 
 /*
 Fix: @SpringBootTest: whole spring context

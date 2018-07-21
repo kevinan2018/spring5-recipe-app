@@ -33,7 +33,7 @@ public class IngredientServiceImpl implements IngredientService {
     }
 
     @Override
-    public IngredientCommand findByRecipeIdAndIngredientId(Long recipeId, Long ingredientId) {
+    public IngredientCommand findByRecipeIdAndIngredientId(String recipeId, String ingredientId) {
 
         Optional<Recipe> recipeOptional = recipeRepository.findById(recipeId);
 
@@ -52,6 +52,9 @@ public class IngredientServiceImpl implements IngredientService {
             //TODO: impl error handling
             log.error("Ingredient id not found: " + ingredientId);
         }
+
+        //TODO: ingredient's recipeId remove to avoid circular reference, set it manually
+        ingredientCommandOptional.get().setRecipeId(recipeId);
 
         return ingredientCommandOptional.get();
     }
@@ -88,7 +91,7 @@ public class IngredientServiceImpl implements IngredientService {
             // add new ingredient to the target recipe
             Ingredient ingredient = ingredientCommandToIngredient.convert(command);
             recipe.addIngredient(ingredient);
-            ingredient.setRecipe(recipe);
+            //ingredient.setRecipe(recipe);
 
         }
 
@@ -110,11 +113,16 @@ public class IngredientServiceImpl implements IngredientService {
         }
 
         //TODO: check for fail
-        return ingredientToIngredientCommand.convert(savedIngredientOptional.get());
+        //return ingredientToIngredientCommand.convert(savedIngredientOptional.get());
+
+        // Ingredient has no recipe id anymore, manually set recipe it
+        IngredientCommand savedIngredientCommand = ingredientToIngredientCommand.convert(savedIngredientOptional.get());
+        savedIngredientCommand.setRecipeId(recipe.getId());
+        return  savedIngredientCommand;
     }
 
     @Override
-    public void deleteByRecipeIdAndIngredientId(Long recipeId, Long ingredientId) {
+    public void deleteByRecipeIdAndIngredientId(String recipeId, String ingredientId) {
         log.debug("Deleting ingredient: " + recipeId + ":" + ingredientId);
 
         Optional<Recipe> recipeOptional = recipeRepository.findById(recipeId);
@@ -130,7 +138,7 @@ public class IngredientServiceImpl implements IngredientService {
             if (ingredientOptional.isPresent()){
                 log.debug("found Ingredient" + ingredientId);
                 Ingredient ingredientToDelete = ingredientOptional.get();
-                ingredientToDelete.setRecipe(null);
+                //ingredientToDelete.setRecipe(null);
 
                 recipe.getIngredients().remove(ingredientOptional.get());
                 recipeRepository.save(recipe);

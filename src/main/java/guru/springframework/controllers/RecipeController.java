@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
+import java.util.UUID;
 
 
 @Slf4j
@@ -27,7 +28,14 @@ public class RecipeController {
 
     @RequestMapping("recipe/{id}/show")
     public String showById(@PathVariable String id, Model model) {
-        model.addAttribute("recipe", recipeService.findById(new Long(id)));
+
+        //NOTE: NumberFormatException if parseUnsignedLong() failed
+        //log.debug("input: "  + id);
+        //long tmp = Long.parseUnsignedLong(id.substring(0,16),16);
+        //log.debug(Long.toHexString(tmp));
+        log.debug(Long.toHexString(Long.parseUnsignedLong(id.substring(0, id.length()>16? 16 : id.length()),16)));
+
+        model.addAttribute("recipe", recipeService.findById(id));
 
         // parent or container represent each child (id)
         return "recipe/show";
@@ -48,26 +56,18 @@ public class RecipeController {
             String desc = ingredient.getUom().getDescription();
         }
         */
-        model.addAttribute("recipe", recipeService.findCommandById(Long.valueOf(id)));
+        model.addAttribute("recipe", recipeService.findCommandById(id));
         return "recipe/recipeform";
     }
 
-    //@RequestMapping(name = "recipe", method = RequestMethod.POST)
-    //@PostMapping
-    //@RequestMapping(name = "recipe")
-    //@RequestMapping("recipe")
-//    @PostMapping("recipe")
-//    public String saveOrUpdate(@ModelAttribute RecipeCommand command) {
-//        RecipeCommand savedCommand = recipeService.saveRecipeCommand(command);
-//
-//        return "redirect:/recipe/" + savedCommand.getId() + "/show";
-//    }
+
     @PostMapping("recipe")
     public String saveOrUpdate(@Valid @ModelAttribute("recipe") RecipeCommand command, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             bindingResult.getAllErrors().forEach(objectError -> {log.debug(objectError.toString());});
             return RECIPE_RECIPEFORM_URL;
         }
+
 
         RecipeCommand savedCommand = recipeService.saveRecipeCommand(command);
 
@@ -79,7 +79,7 @@ public class RecipeController {
     public String deleteById(@PathVariable String id) {
         log.debug("Deleting id: " + id);
 
-        recipeService.deleteById(Long.valueOf(id));
+        recipeService.deleteById(id);
         return "redirect:/";
     }
 
