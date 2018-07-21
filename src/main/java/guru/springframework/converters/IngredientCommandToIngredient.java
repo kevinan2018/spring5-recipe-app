@@ -23,7 +23,7 @@ public class IngredientCommandToIngredient implements Converter<IngredientComman
         }
 
         final Ingredient ingredient = new Ingredient();
-        ingredient.setId(source.getId());
+        //ingredient.setId(source.getId());//Generate Id by ctor or Ingredient
         ingredient.setAmount(source.getAmount());
         ingredient.setDescription(source.getDescription());
         ingredient.setUom(converter.convert(source.getUom()));

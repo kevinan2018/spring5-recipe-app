@@ -19,7 +19,6 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"
             th:src="@{/webjars/bootstrap/4.1.1/js/bootstrap.min.js}"></script>
 
-    <!--
     <style type="text/css">
         .panel-primary{
             border: 1px solid black;
@@ -32,12 +31,11 @@
         .btn {
             /*font-size: 20px;*/
             margin-left: -20px;
-            background: gainsboro;
-            font-weight: bold;
+            /*background: gainsboro;
+            font-weight: bold;*/
         }
-    }
+
     </style>
-    -->
 
 </head>
 <body>
@@ -156,7 +154,7 @@
                                     <h1 class="panel-title">Ingredients</h1>
                                 </div>
                                 <div class="col-md-1">
-                                    <a class="btn btn-default" href="#" role="button">View</a>
+                                    <a class="btn btn-primary" href="#" th:href="@{'/recipe/' + ${recipe.id} + '/ingredients'}" role="button">View</a>
                                 </div>
                             </div>
                         </div>
