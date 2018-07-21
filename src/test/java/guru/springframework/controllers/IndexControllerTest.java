@@ -12,7 +12,9 @@ import org.springframework.test.web.servlet.MockMvcBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.ui.Model;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.*;
@@ -53,7 +55,7 @@ public class IndexControllerTest {
     @Test
     public void getIndexPage() {
         //given
-        Set<Recipe> recipes = new HashSet<>();
+        List<Recipe> recipes = new ArrayList<>();
         recipes.add(new Recipe());
         Recipe recipe = new Recipe();
         recipe.setId("100");
@@ -62,7 +64,7 @@ public class IndexControllerTest {
         when(recipeService.getRecipes()).thenReturn(recipes);
 
         // argument captor of the 2nd argument of model.addAttribute("recipes", recipeService.getRecipes());
-        ArgumentCaptor<Set<Recipe>> argumentCaptor = ArgumentCaptor.forClass(Set.class);
+        ArgumentCaptor<List<Recipe>> argumentCaptor = ArgumentCaptor.forClass(List.class);
 
         //when
         String viewName = indexController.getIndexPage(model);
@@ -76,7 +78,7 @@ public class IndexControllerTest {
         //verify(model, times(1)).addAttribute(eq("recipes"), anySet());
         verify(model, times(1)).addAttribute(eq("recipes"), argumentCaptor.capture());
 
-        Set<Recipe> setInController = argumentCaptor.getValue();
+        List<Recipe> setInController = argumentCaptor.getValue();
         assertEquals(2, setInController.size());
 
     }

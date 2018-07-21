@@ -13,9 +13,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import javax.swing.text.html.Option;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -46,12 +44,12 @@ public class RecipeServiceImplTest {
 
         // Add recipe to recipe list
         Recipe recipe = new Recipe();
-        HashSet recipeData = new HashSet();
+        List<Recipe> recipeData = new ArrayList<>();
         recipeData.add(recipe);
 
         when(recipeService.getRecipes()).thenReturn(recipeData);
 
-        Set<Recipe> recipes = recipeService.getRecipes();
+        List<Recipe> recipes = recipeService.getRecipes();
 
         //assertEquals(recipes.size(), 0); //Mockito by default generate empty list
         assertEquals(recipes.size(), 1); //thenReturn()
