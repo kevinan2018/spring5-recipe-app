@@ -43,6 +43,7 @@ public class UnitOfMeasureRepositoryIT {
         unitOfMeasureRepository.deleteAll();
         categoryRepository.deleteAll();
 
+        //NOTE: we call ctor here directly, so autowired won't work in RecipeBootstrap!
         // mimic the spring context
         RecipeBootstrap recipeBootstrap = new RecipeBootstrap(categoryRepository, recipeRepository, unitOfMeasureRepository);
         recipeBootstrap.onApplicationEvent(null);
