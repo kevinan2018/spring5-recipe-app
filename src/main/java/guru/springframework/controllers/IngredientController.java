@@ -55,11 +55,7 @@ public class IngredientController {
     public String deleteRecipeIngredient(@PathVariable String recipeId,
                                          @PathVariable String id){
         //delete reference from recipe's ingredient list, the ingredient still exists inside of ingredient repository
-        Mono<Void> nres = ingredientService.deleteByRecipeIdAndIngredientId(recipeId, id);
-        //Mockito test return null instead of Mono.emtpy()
-        if (nres != null) {
-            nres.block();
-        }
+        ingredientService.deleteByRecipeIdAndIngredientId(recipeId, id);
 
         return "redirect:/recipe/" + recipeId + "/ingredients";
     }

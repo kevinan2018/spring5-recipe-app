@@ -35,18 +35,32 @@ public class IngredientServiceImpl implements IngredientService {
     @Override
     public Mono<IngredientCommand> findByRecipeIdAndIngredientId(String recipeId, String ingredientId) {
 
-        return recipeReactiveRepository.findById(recipeId)
-                .map(recipe -> recipe.getIngredients()
-                    .stream()
-                    .filter(ingredient -> ingredient.getId().equalsIgnoreCase(ingredientId))
-                    .findFirst())
-                .filter(Optional::isPresent) //Mono is a publisher,filter return a Mono//Optional<Mono>
+        // Pure spring reactive way Mono<T>
+        return recipeReactiveRepository
+                .findById(recipeId)
+                .flatMapIterable(Recipe::getIngredients)
+                .filter(ingredient -> ingredient.getId().equalsIgnoreCase(ingredientId))
+                .single()
                 .map(ingredient -> {
-                    IngredientCommand command = ingredientToIngredientCommand.convert(ingredient.get());
+                    IngredientCommand command = ingredientToIngredientCommand.convert(ingredient);
                     command.setRecipeId(recipeId);
                     return command;
                 });
 
+//Mix reactive and java stream
+//        return recipeReactiveRepository.findById(recipeId)
+//                .map(recipe -> recipe.getIngredients()
+//                    .stream()
+//                    .filter(ingredient -> ingredient.getId().equalsIgnoreCase(ingredientId))
+//                    .findFirst()//Optional<Recipe>
+//                )
+//                .filter(Optional::isPresent) //Mono<T>.filter is a publisher.filter which filter T/Optional and returns a Mono
+//                .map(ingredient -> {
+//                    IngredientCommand command = ingredientToIngredientCommand.convert(ingredient.get());
+//                    command.setRecipeId(recipeId);
+//                    return command;
+//                });
+//Optional way:
 //        Optional<Recipe> recipeOptional = recipeReactiveRepository.findById(recipeId).blockOptional();
 //
 //        if (!recipeOptional.isPresent()) {
@@ -154,7 +168,13 @@ public class IngredientServiceImpl implements IngredientService {
                 //ingredientToDelete.setRecipe(null);
 
                 recipe.getIngredients().remove(ingredientOptional.get());
-                recipeReactiveRepository.save(recipe);
+                Mono<Recipe> recipeMono = recipeReactiveRepository.save(recipe);
+
+                // Mockito test return null
+                if (recipeMono != null) {
+                    recipeMono.block();
+                }
+
             } else {
                 log.debug("Ingredient Id Not found, Id: " + ingredientId);
             }
