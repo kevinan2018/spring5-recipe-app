@@ -168,12 +168,7 @@ public class IngredientServiceImpl implements IngredientService {
                 //ingredientToDelete.setRecipe(null);
 
                 recipe.getIngredients().remove(ingredientOptional.get());
-                Mono<Recipe> recipeMono = recipeReactiveRepository.save(recipe);
-
-                // Mockito test return null
-                if (recipeMono != null) {
-                    recipeMono.block();
-                }
+                recipeReactiveRepository.save(recipe).block();
 
             } else {
                 log.debug("Ingredient Id Not found, Id: " + ingredientId);
