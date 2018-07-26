@@ -30,7 +30,7 @@
 
         .btn {
             /*font-size: 20px;*/
-            margin-left: -20px;
+            /*margin-left: -20px;*/
             /*background: gainsboro;
             font-weight: bold;*/
         }
@@ -54,7 +54,15 @@
                 <div class="panel-group">
                     <div class="card card-primary card-inverse">
                         <div class="card-header">
-                            <h1 class="card-title">Edit Recipe Informatin</h1>
+                            <div class="row">
+                                <div class="col-md-10">
+                                    <h1 class="card-title">Edit Recipe Informatin</h1>
+                                </div>
+                                <div th:class="col-md-2">
+                                    <a class="btn btn-primary" href="#"
+                                       th:href="@{'/recipe/' + ${recipe.id} + '/image'}" role="button">Change Image</a>
+                                </div>
+                            </div>
                         </div>
                         <dvi class="card-body">
                             <div class="row">
@@ -72,8 +80,8 @@
                                 <div class="col-md-3 form-group">
                                     <label>Categories:</label>
                                 </div>
-                                <div class="col-md-9 form-group">
-                                    <div class="radio">
+                                <div class="col-md-3 form-group" th:class="${#fields.hasErrors('description')} ? 'col-md-3 form-group has-error' : 'col-md-3 form-group'">
+                                    <div class="radio" th:remove="all">
                                         <label>
                                             <input type="checkbox" value=""/>
                                             Cat 1
@@ -85,6 +93,32 @@
                                             Cat 2
                                         </label>
                                     </div>
+                                    <div class="radio">
+                                        <ul style="list-style: none;" th:if="${not #lists.isEmpty(recipe.categories)}">
+                                            <li th:each="category : ${recipe.categories}">
+                                                <input type="checkbox" checked="true" value="" th:text="${category.getDescription()}"/>
+                                            </li>
+                                        </ul>
+                                        <ul style="list-style: none;" th:if="${#lists.isEmpty(recipe.categories)}">
+                                            <li>
+                                                <input type="checkbox" checked="" value="">TODO Cat1 </input>
+                                            </li>
+                                            <li>
+                                                <input type="checkbox" checked="" value="">TODO Cat2 </input>
+                                            </li>
+                                        </ul>
+
+                                    </div>
+                                    <span class="help-block" th:if="${#fields.hasErrors('categories')}">
+                                        <ul>
+                                            <li th:each="err : ${#fields.errors('categories')}" th:text="${err}"/>
+                                        </ul>
+                                    </span>
+                                </div>
+                                <div class="col-md-6">
+                                    <img src="../../static/images/guacamole400x400WithX.jpg"
+                                         th:src="@{'/recipe/' + ${recipe.id} + '/recipeimage'}"
+                                         width="200" height="200"/>
                                 </div>
                             </div>
                             <div class="row">

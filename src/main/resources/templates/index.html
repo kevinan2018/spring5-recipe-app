@@ -20,27 +20,9 @@
             th:src="@{/webjars/bootstrap/4.1.1/js/bootstrap.min.js}"></script>
 
 </head>
-<!--Put the @thymesVar comment between the </head> and <body> tags and the rest of the document will pick up all the variables and methods.
-You don't have to use it multiple times,
-it has to be in a higher hierarchy that's all.-->
-<!--/*@thymesVar id="recipe" type="guru.springframework.domain.Recipe*/-->
+
 <body>
-
-<!-- Previous display list
-<h1>My Recipes!</h1>
-
-<table>
-    <tr>
-        <th>ID</th>
-        <th>Description</th>
-    </tr>
-    <tr th:each="recipe : ${recipes}">
-        <td th:text="${recipe.id}">123</td>
-        <td th:text="${recipe.description}">Tasty Goodness</td>
-    </tr>
-</table>
--->
-
+<!--/*@thymesVar id="recipe" type="guru.springframework.domain.Recipe*/-->
 <div class="container-fluid" style="margin-top: 20px;">
     <div class="row">
         <!-- col-md-offset deprecated, offset-md is the left margin of all columns -->
@@ -48,7 +30,14 @@ it has to be in a higher hierarchy that's all.-->
             <div class="card card-primary card-inverse">
 
                 <div class="card-header">
-                    <h1 class="card-title">My Recipes!</h1>
+                    <div class="row">
+                        <div class="col-md-10">
+                            <h1 class="card-title">My Recipes!</h1>
+                        </div>
+                        <div class="col-md-2">
+                            <a class="btn btn-primary" href="#" th:href="@{/recipe/new}" role="button">New Recipe</a>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="card-body">
@@ -78,7 +67,6 @@ it has to be in a higher hierarchy that's all.-->
                                 <td><a href="#">Delete</a></td>
                             </tr>
                             <tr th:each="recipe : ${recipes}">
-                                <!--/*@thymesVar id="recipe" type="guru.springframework.domain.Recipe*/-->
                                 <td th:text="${recipe.id}">333</td>
                                 <td th:text="${recipe.description}">Tasty Goodness</td>
                                 <!-- <td><a href="#" th:href="@{'/recipe/show/' + ${recipe.id}}"

@@ -33,10 +33,10 @@ it has to be in a higher hierarchy that's all.-->
                 <div class="card card-primary card-inverse"> <!--panel panel-primary -->
                     <div class="card-header"><!--panel-heading-->
                         <div class="row">
-                            <div class="col-md-9">
+                            <div class="col-md-10">
                                 <h1 class="panel-title" th:text="${recipe.description}">Recipe Description Here!</h1>
                             </div>
-                            <div class="col-md-1">
+                            <div class="col-md-2">
                                 <a class="btn btn-primary" href="#"
                                    th:href="@{'/recipe/' + ${recipe.id} + '/image'}" role="button">Change Image</a>
                             </div>
@@ -109,7 +109,7 @@ it has to be in a higher hierarchy that's all.-->
                 <div class="card card-primary card-inverse"><!--panel panel-primary-->
                     <div class="card-header"><!--panel-heading-->
                         <div class="row">
-                            <div class="col-md-10">
+                            <div class="col-md-11">
                                 <h1 class="card-title">Ingredients</h1><!--panel-title-->
                             </div>
                             <div class="col-md-1">
@@ -121,7 +121,7 @@ it has to be in a higher hierarchy that's all.-->
                     <div class="card-body"><!--panel-body-->
                         <div class="row">
                             <div class="col-md-12">
-                                <ul  th:object="${recipe}" th:if="${not #lists.isEmpty(recipe.ingredients)}">
+                                <ul th:object="${recipe}" th:if="${not #lists.isEmpty(recipe.ingredients)}">
                                     <li th:remove="all">1 Cup of millk</li>
                                     <li th:remove="all">1 Teaspoon of chocolate</li>
                                     <li th:remove="all">1 Teaspoon of sugar</li>

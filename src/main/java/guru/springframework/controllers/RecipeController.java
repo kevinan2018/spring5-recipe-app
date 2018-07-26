@@ -35,12 +35,13 @@ public class RecipeController {
         //log.debug(Long.toHexString(tmp));
         log.debug(Long.toHexString(Long.parseUnsignedLong(id.substring(0, id.length()>16? 16 : id.length()),16)));
 
-        model.addAttribute("recipe", recipeService.findById(id));
+        model.addAttribute("recipe", recipeService.findById(id).block());
 
         // parent or container represent each child (id)
         return "recipe/show";
     }
 
+    //TODO: implement this?
     @RequestMapping("recipe/new")
     public String newRecipe(Model model) {
         model.addAttribute("recipe", new RecipeCommand());
@@ -56,7 +57,7 @@ public class RecipeController {
             String desc = ingredient.getUom().getDescription();
         }
         */
-        model.addAttribute("recipe", recipeService.findCommandById(id));
+        model.addAttribute("recipe", recipeService.findCommandById(id).block());
         return "recipe/recipeform";
     }
 
@@ -69,7 +70,7 @@ public class RecipeController {
         }
 
 
-        RecipeCommand savedCommand = recipeService.saveRecipeCommand(command);
+        RecipeCommand savedCommand = recipeService.saveRecipeCommand(command).block();
 
         return "redirect:/recipe/" + savedCommand.getId() + "/show";
     }

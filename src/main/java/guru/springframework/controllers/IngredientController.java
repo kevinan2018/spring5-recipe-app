@@ -30,7 +30,7 @@ public class IngredientController {
         log.debug("Getting ingredient list for recipe id: " + recipeId);
 
         // use command object to avoid lazy load errors in Thymeleaf.
-        model.addAttribute("recipe", recipeService.findCommandById(recipeId));
+        model.addAttribute("recipe", recipeService.findCommandById(recipeId).block());
 
         return "recipe/ingredient/list";
     }
@@ -72,8 +72,8 @@ public class IngredientController {
 
     @GetMapping("recipe/{recipeId}/ingredient/new")
     public String newRecipe(@PathVariable String recipeId, Model model) {
-        //check reicipe id
-        RecipeCommand recipeCommand = recipeService.findCommandById(recipeId);
+        //TODO: check reicipe id
+        RecipeCommand recipeCommand = recipeService.findCommandById(recipeId).block();
 
         //need to return back parent id for hidden form prperty
         IngredientCommand ingredientCommand = new IngredientCommand();

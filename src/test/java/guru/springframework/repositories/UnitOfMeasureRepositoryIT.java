@@ -2,18 +2,17 @@ package guru.springframework.repositories;
 
 import guru.springframework.bootstrap.RecipeBootstrap;
 import guru.springframework.domain.UnitOfMeasure;
+import guru.springframework.repositories.reactive.CategoryReactiveRepository;
+import guru.springframework.repositories.reactive.RecipeReactiveRepository;
+import guru.springframework.repositories.reactive.UnitOfMeasureReactiveRepository;
 import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Optional;
-import java.util.OptionalInt;
 
 import static org.junit.Assert.*;
 
@@ -24,28 +23,28 @@ import static org.junit.Assert.*;
 public class UnitOfMeasureRepositoryIT {
 
     @Autowired
-    UnitOfMeasureRepository unitOfMeasureRepository;
+    UnitOfMeasureReactiveRepository unitOfMeasureReactiveRepository;
 
     //@Autowired //this won't help
-    //RecipeRepository recipeRepository;
+    //RecipeRepository recipeReactiveRepository;
 
     @Autowired
-    CategoryRepository categoryRepository;
+    CategoryReactiveRepository categoryReactiveRepository;
 
     @Autowired
-    RecipeRepository recipeRepository;
+    RecipeReactiveRepository recipeReactiveRepository;
 
     @Before
     public void setUp() throws Exception {
 
         // Clean up since mongodd has not tranaction, no rollback
-        recipeRepository.deleteAll();
-        unitOfMeasureRepository.deleteAll();
-        categoryRepository.deleteAll();
+        recipeReactiveRepository.deleteAll().block();
+        unitOfMeasureReactiveRepository.deleteAll().block();
+        categoryReactiveRepository.deleteAll().block();
 
         //NOTE: we call ctor here directly, so autowired won't work in RecipeBootstrap!
         // mimic the spring context
-        RecipeBootstrap recipeBootstrap = new RecipeBootstrap(categoryRepository, recipeRepository, unitOfMeasureRepository);
+        RecipeBootstrap recipeBootstrap = new RecipeBootstrap(categoryReactiveRepository, recipeReactiveRepository, unitOfMeasureReactiveRepository);
         recipeBootstrap.onApplicationEvent(null);
     }
 
@@ -53,14 +52,14 @@ public class UnitOfMeasureRepositoryIT {
 //    public void setUp() throws Exception {
 //
 //        // mimic the spring context
-//        RecipeBootstrap recipeBootstrap = new RecipeBootstrap(categoryRepository, recipeRepository, unitOfMeasureRepository);
+//        RecipeBootstrap recipeBootstrap = new RecipeBootstrap(categoryReactiveRepository, recipeReactiveRepository, unitOfMeasureReactiveRepository);
 //        recipeBootstrap.onApplicationEvent(null);
 //    }
 
     @Test
     public void findBydescription() {
 
-        Optional<UnitOfMeasure> uomOptional = unitOfMeasureRepository.findBydescription("Teaspoon");
+        Optional<UnitOfMeasure> uomOptional = unitOfMeasureReactiveRepository.findBydescription("Teaspoon").blockOptional();
 
         assertEquals("Teaspoon", uomOptional.get().getDescription());
     }
@@ -69,15 +68,15 @@ public class UnitOfMeasureRepositoryIT {
     @Test
     public void findBydescriptionCup() {
 
-        Optional<UnitOfMeasure> uomOptional = unitOfMeasureRepository.findBydescription("Cup");
+        Optional<UnitOfMeasure> uomOptional = unitOfMeasureReactiveRepository.findBydescription("Cup").blockOptional();
 
         assertEquals("Cup", uomOptional.get().getDescription());
     }
 }
 
 /*
-Fix: unitOfMeasureRepository.deleteAll()
-     categoryRepository.deleteAll()
+Fix: unitOfMeasureReactiveRepository.deleteAll()
+     categoryReactiveRepository.deleteAll()
 
 Problem:
 @Before run for every test, insert data twice!

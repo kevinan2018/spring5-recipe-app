@@ -31,7 +31,7 @@ public class ImageController {
 
     @GetMapping("recipe/{id}/image")
     public String showUploadForm(@PathVariable String id, Model model) {
-        model.addAttribute("recipe", recipeService.findCommandById(id));
+        model.addAttribute("recipe", recipeService.findCommandById(id).block());
 
         return "recipe/imageuploadform";
     }
@@ -51,7 +51,7 @@ public class ImageController {
         //NOTE: NumberFormatException if parseUnsignedLong failed
         log.debug(Long.toHexString(Long.parseUnsignedLong(id.substring(0, id.length()>16? 16 : id.length()),16)));
 
-        RecipeCommand recipeCommand = recipeService.findCommandById(id);
+        RecipeCommand recipeCommand = recipeService.findCommandById(id).block();
 
         //NOTE: recipeCommand cannot be null findCommandById->recipeservice.findById() throw NotFoundException
         if (recipeCommand.getImage() != null) {
