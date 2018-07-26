@@ -6,17 +6,18 @@ import guru.springframework.services.RecipeService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Mono;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -47,7 +48,7 @@ public class ImageControllerTest {
     }
 
     @Test
-    public void getImageForm() throws Exception {
+    public void getImageFormTest() throws Exception {
         //given
         RecipeCommand command = new RecipeCommand();
         command.setId("1");
@@ -63,8 +64,10 @@ public class ImageControllerTest {
     }
 
     @Test
-    public void handleImagePost() throws Exception {
+    public void handleImagePostTest() throws Exception {
         MockMultipartFile multipartFile = new MockMultipartFile("imagefile", "testing.txt", "text/plain", "Spring Framework Guru".getBytes());
+
+        when(imageService.saveImageFile(anyString(), Mockito.<MultipartFile>any())).thenReturn(Mono.empty());
 
         mockMvc.perform(multipart("/recipe/1/image").file(multipartFile))//upload file request
                 .andExpect(status().is3xxRedirection())
