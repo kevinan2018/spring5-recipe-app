@@ -9,7 +9,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.websocket.server.ServerEndpoint;
+//import javax.websocket.server.ServerEndpoint;
 import java.math.BigDecimal;
 import java.util.UUID;
 
@@ -17,7 +17,7 @@ import java.util.UUID;
 @Setter
 public class Ingredient {
 
-    //@Id won't work since Ingredient is no a document?
+    //@Id won't work with mongo db unless with @Document
     private String id = UUID.randomUUID().toString().replace("-", "");
 
     private String description;

@@ -142,13 +142,13 @@ public class IngredientServiceImplTest {
         ingredient.setId("3");
         recipe.addIngredient(ingredient);
         //ingredient.setRecipe(recipe);
-        Optional<Recipe> recipeOptional = Optional.of(recipe);
 
-        when(recipeReactiveRepository.findById(anyString())).thenReturn(Mono.just(recipeOptional.get()));
-        when(recipeReactiveRepository.save(Mockito.<Recipe>any())).thenReturn(Mono.empty());
+
+        when(recipeReactiveRepository.findById(anyString())).thenReturn(Mono.just(recipe));
+        when(recipeReactiveRepository.save(Mockito.<Recipe>any())).thenReturn(Mono.just(recipe));
 
         //when
-        ingredientService.deleteByRecipeIdAndIngredientId("1", "3");
+        ingredientService.deleteByRecipeIdAndIngredientId("1", "3").block();
 
         //then
         verify(recipeReactiveRepository, times(1)).findById(anyString());

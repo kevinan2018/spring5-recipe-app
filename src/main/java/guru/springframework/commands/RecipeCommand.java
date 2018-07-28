@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.validator.constraints.URL;
+import org.springframework.data.annotation.Id;
+import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -50,4 +52,5 @@ public class RecipeCommand {
     private List<IngredientCommand> ingredients = new ArrayList<>();
     private NotesCommand notes;
     private List<CategoryCommand> categories = new ArrayList<>();
+
 }

@@ -23,20 +23,20 @@
 <!--Put the @thymesVar comment between the </head> and <body> tags and the rest of the document will pick up all the variables and methods.
 You don't have to use it multiple times,
 it has to be in a higher hierarchy that's all.-->
-<!--/*@thymesVar id="recipe" type="guru.springframework.domain.Recipe*/-->
+<!--/*@thymesVar id="recipe" type="guru.springframework.domain.Recipe"*/-->
 <body>
 <div class="container-fluid" style="margin-top: 20px;">
-    <div class="row">
+    <div class="row" th:object="${recipe}">
         <!-- col-md-offset deprecated, offset-md is the left margin of all columns -->
         <div class="col-md-6 offset-md-3">
             <div class="panel-group"> <!-- panel-group-->
                 <div class="card card-primary card-inverse"> <!--panel panel-primary -->
                     <div class="card-header"><!--panel-heading-->
                         <div class="row">
-                            <div class="col-md-10">
+                            <div class="col-md-9">
                                 <h1 class="panel-title" th:text="${recipe.description}">Recipe Description Here!</h1>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-md-3">
                                 <a class="btn btn-primary" href="#"
                                    th:href="@{'/recipe/' + ${recipe.id} + '/image'}" role="button">Change Image</a>
                             </div>
@@ -109,10 +109,10 @@ it has to be in a higher hierarchy that's all.-->
                 <div class="card card-primary card-inverse"><!--panel panel-primary-->
                     <div class="card-header"><!--panel-heading-->
                         <div class="row">
-                            <div class="col-md-11">
+                            <div class="col-md-10">
                                 <h1 class="card-title">Ingredients</h1><!--panel-title-->
                             </div>
-                            <div class="col-md-1">
+                            <div class="col-md-2">
                                 <a class="btn btn-primary" href="#" th:href="@{'/recipe/' + ${recipe.id} + '/ingredients'}" role="button">View</a>
                             </div>
                         </div>

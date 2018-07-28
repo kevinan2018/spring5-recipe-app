@@ -27,7 +27,9 @@
     <div class="row">
         <div class="col-md-6 offset-md-3">
             <form th:object="${ingredient}" th:action="@{'/recipe/' + ${ingredient.getRecipeId()} + '/ingredient'}" method="post">
-                <input type="hidden" th:field="*{id}"/>
+                <!--th:field="*{id}"-->
+                <input type="hidden" th:id="id" th:name="id" th:value="*{id}"/>
+                <input type="hidden" th:id="recipeId" th:name="recipeId" th:value="*{recipeId}"/>
                 <div class="card card-primary card-inverse">
                     <div class="card-header">
                         <h1 class="card-title">Edit Ingredient Information</h1>
@@ -36,21 +38,24 @@
                         <div class="row">
                             <div class="col-md-3 form-group">
                                 <label>Description:</label>
-                                <input type="text" class="form-control" th:field="*{description}"/>
+                                <!--th:field="*{description}"-->
+                                <input type="text" class="form-control" th:id="description" th:name="description" th:value="*{description}"/>
                             </div>
                             <div class="col-md-3 form-group">
                                 <label>Amount:</label>
-                                <input type="number" class="form-control" th:field="*{amount}"/>
+                                <!--th:field="*{amount}"-->
+                                <input type="number" class="form-control" th:id="amount" th:name="amount" th:value="*{amount}"/>
                             </div>
 
                             <div class="col-md-3 form-group">
                                 <label>UOM:</label>
-                                <select class="form-control" name="uom.id">
+                                <select class="form-control" th:id="uom.id" th:name="uom.id">
                                     <option th:each="uomEach : ${uomList}"
                                             th:value="${uomEach.id}"
                                             th:selected="${uomEach.id.equals(ingredient.uom.id)}"
                                             th:text="${uomEach.description}">Each</option>
                                 </select>
+                                <input type="hidden" th:id="uom.description" th:name="uom.description" th:value="*{uom.description}" />
                             </div>
                         </div>
                     </div>

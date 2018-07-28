@@ -19,27 +19,9 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"
             th:src="@{/webjars/bootstrap/4.1.1/js/bootstrap.min.js}"></script>
 
-    <style type="text/css">
-        .panel-primary{
-            border: 1px solid black;
-        }
-        .panel-heading{
-            color: white;
-            background: darkslategrey;
-        }
-
-        .btn {
-            /*font-size: 20px;*/
-            /*margin-left: -20px;*/
-            /*background: gainsboro;
-            font-weight: bold;*/
-        }
-
-    </style>
-
 </head>
-<body>
 <!--/*@thymesVar id="recipe" type="guru.springframework.commands.RecipeCommand"*/-->
+<body>
 <div class="container-fluid" style="margin-top: 20px;">
     <div class="row">
         <div class="col-md-6 offset-md-3">
@@ -48,17 +30,21 @@
 
                 <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger">
                     <p>Please Correct Errors Below</p>
+                    <ul>
+                        <li th:each="err : ${#fields.allDetailedErrors()}" th:text="${err.getFieldName()} + ':' + ${err.getCode()} + ':' + ${err.getMessage()}"></li>
+                    </ul>
                 </div>
 
-                <input type="hidden" th:field="*{id}"/>
+                <!--th:field="*{id}"-->
+                <input type="hidden" th:id="id" th:name="id" th:value="${recipe.id}" />
                 <div class="panel-group">
                     <div class="card card-primary card-inverse">
                         <div class="card-header">
                             <div class="row">
-                                <div class="col-md-10">
+                                <div class="col-md-9">
                                     <h1 class="card-title">Edit Recipe Informatin</h1>
                                 </div>
-                                <div th:class="col-md-2">
+                                <div th:class="col-md-3">
                                     <a class="btn btn-primary" href="#"
                                        th:href="@{'/recipe/' + ${recipe.id} + '/image'}" role="button">Change Image</a>
                                 </div>
@@ -66,10 +52,11 @@
                         </div>
                         <dvi class="card-body">
                             <div class="row">
-                                <div class="col-md-3 form-group"  th:class="${#fields.hasErrors('description')} ? 'col-md-3 form-group has-error' : 'col-md-3 form-group'">
+                                <div class="col-md-3 form-group" th:class="${#fields.hasErrors()} and ${#fields.hasErrors('description')} ? 'col-md-3 form-group alert-warning' : 'col-md-3 form-group'">
                                     <label th:text="#{recipe.description}">Recipe Description:</label>
-                                    <input th:type="text" class="form-control" th:field="*{description}" th:errorclass="has-error"/>
-                                    <span class="help-block" th:if="${#fields.hasErrors('description')}">
+                                    <!--th:field="*{description}"-->
+                                    <input th:type="text" class="form-control" th:id="description" th:name="description" th:value="${recipe.description}" />
+                                    <span class="help-block" th:if="${#fields.hasErrors()} and ${#fields.hasErrors('description')}">
                                         <ul>
                                             <li th:each="err : ${#fields.errors('description')}" th:text="${err}"/>
                                         </ul>
@@ -80,7 +67,7 @@
                                 <div class="col-md-3 form-group">
                                     <label>Categories:</label>
                                 </div>
-                                <div class="col-md-3 form-group" th:class="${#fields.hasErrors('description')} ? 'col-md-3 form-group has-error' : 'col-md-3 form-group'">
+                                <div class="col-md-3 form-group" >
                                     <div class="radio" th:remove="all">
                                         <label>
                                             <input type="checkbox" value=""/>
@@ -93,49 +80,56 @@
                                             Cat 2
                                         </label>
                                     </div>
-                                    <div class="radio">
+                                    <div class="radio" >
                                         <ul style="list-style: none;" th:if="${not #lists.isEmpty(recipe.categories)}">
-                                            <li th:each="category : ${recipe.categories}">
-                                                <input type="checkbox" checked="true" value="" th:text="${category.getDescription()}"/>
+                                            <li th:each="category, idx : ${recipe.categories}">
+                                                <input type="hidden" th:id="categories__${idx.index}__.id" th:name="categories[__${idx.index}__].id" th:value="${category.id}"/>
+                                                <input type="checkbox" checked="true" th:id="categories__${idx.index}__.description" th:name="categories[__${idx.index}__].description" th:value="${category.getDescription()}"/>
+                                                <label th:text="${category.description}"></label>
                                             </li>
                                         </ul>
-                                        <ul style="list-style: none;" th:if="${#lists.isEmpty(recipe.categories)}">
-                                            <li>
-                                                <input type="checkbox" checked="" value="">TODO Cat1 </input>
-                                            </li>
-                                            <li>
-                                                <input type="checkbox" checked="" value="">TODO Cat2 </input>
-                                            </li>
-                                        </ul>
-
-                                    </div>
-                                    <span class="help-block" th:if="${#fields.hasErrors('categories')}">
+                                        <span class="help-block" th:if="${#fields.hasErrors('*')} and ${#fields.hasErrors('categories')}">
                                         <ul>
                                             <li th:each="err : ${#fields.errors('categories')}" th:text="${err}"/>
                                         </ul>
                                     </span>
+                                        <ul style="list-style: none;" th:if="${#lists.isEmpty(recipe.categories)}">
+                                            <li>
+                                                <input type="checkbox" checked="" value=""/>
+                                                <label>TODO Cat1</label>
+                                            </li>
+                                            <label>
+                                                <input type="checkbox" checked="" value=""/>
+                                                <label>TODO Cat2</label>
+                                            </li>
+                                        </ul>
+
+                                    </div>
+
                                 </div>
                                 <div class="col-md-6">
                                     <img src="../../static/images/guacamole400x400WithX.jpg"
                                          th:src="@{'/recipe/' + ${recipe.id} + '/recipeimage'}"
+                                         th:id="image" th:name="image" th:value="*{image}"
                                          width="200" height="200"/>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-3 form-group" th:class="${#fields.hasErrors('prepTime')} ? 'col-md-3 form-group has-error' : 'col-md-3 form-group'">
+                                <div class="col-md-3 form-group" th:class="${#fields.hasErrors()} and ${#fields.hasErrors('prepTime')} ? 'col-md-3 form-group alert-warning' : 'col-md-3 form-group'">
                                     <label>Prep Time:</label>
-                                    <input type="text" class="form-control" th:field="*{prepTime}" th:errorclass="has-error"/>
-                                    <span class="help-block" th:if="${#fields.hasErrors('prepTime')}">
+                                    <!--th:field="*{prepTime}"-->
+                                    <input type="text" class="form-control" th:id="prepTime" th:name="prepTime" th:value="${recipe.prepTime}"/>
+                                    <span class="help-block" th:if="${#fields.hasErrors('*')} and ${#fields.hasErrors('prepTime')}">
                                         <ul>
                                             <li th:each="err : ${#fields.errors('prepTime')}" th:text="${err}"/>
                                         </ul>
                                     </span>
                                 </div>
-                                <div class="col-md-3 form-group" th:class="${#fields.hasErrors('cookTime')} ?
-                                'col-md-3 form-group has-error' : 'col-md-3 form-group'">
+                                <div class="col-md-3 form-group" th:class="${#fields.hasErrors()} and ${#fields.hasErrors('cookTime')} ? 'col-md-3 form-group alert-warning' : 'col-md-3 form-group'">
                                     <label>CookTime:</label>
-                                    <input type="text" class="form-control" th:field="*{cookTime}" th:errorclass="has-error"/>
-                                    <span class="help-block" th:if="${#fields.hasErrors('cookTime')}">
+                                    <!--th:field="*{cookTime}"-->
+                                    <input type="text" class="form-control" th:id="cookTime" th:name="cookTime" th:value="${recipe.cookTime}"/>
+                                    <span class="help-block" th:if="${#fields.hasErrors('*')} and ${#fields.hasErrors('cookTime')}">
                                         <ul>
                                             <li th:each="err : ${#fields.errors('cookTime')}" th:text="${err}"/>
                                         </ul>
@@ -143,7 +137,8 @@
                                 </div>
                                 <div class="col-md-3 form-group">
                                     <label>Difficulty:</label>
-                                    <select class="form-control" th:field="*{difficulty}">
+                                    <!--th:field="*{difficulty}"-->
+                                    <select class="form-control" th:id="difficulty" th:name="difficulty" th:value="${recipe.difficulty}">
                                             <option th:each="difficultyValue : ${T(guru.springframework.domain.Difficulty).values()}"
                                                     th:value="${difficultyValue.name()}"
                                                     th:text="${difficultyValue.name()}">val</option>
@@ -156,10 +151,11 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-3 form-group" th:class="${#fields.hasErrors('servings')} ? 'col-md-3 form-group has-error' : 'col-md-3 form-group'">
+                                <div class="col-md-3 form-group" th:class="${#fields.hasErrors()} and ${#fields.hasErrors('servings')} ? 'col-md-3 form-group alert-warning' : 'col-md-3 form-group'">
                                     <label>Servings:</label>
-                                    <input type="text" class="form-control" th:field="*{servings}">
-                                    <span class="help-block" th:if="${#fields.hasErrors('servings')}">
+                                    <!--th:field="*{servings}"-->
+                                    <input type="text" class="form-control" th:id="servings" th:name="servings" th:value="${recipe.servings}">
+                                    <span class="help-block" th:if="${#fields.hasErrors('*')} and ${#fields.errors('servings')}">
                                         <ul>
                                             <li th:each="err : ${#fields.errors('servings')}" th:text="${err}"/>
                                         </ul>
@@ -167,16 +163,17 @@
                                 </div>
                                 <div class="col-md-3 form-group">
                                     <label>Source:</label>
-                                    <input type="text" class="form-control" th:field="*{source}"/>
+                                    <!--th:field="*{source}"-->
+                                    <input type="text" class="form-control" th:id="source" th:name="source" th:value="${recipe.source}"/>
                                 </div>
-                                <div class="col-md-3 form-group" th:class="${#fields.hasErrors('url')} ? 'col-md-3 form-group has-error' : 'col-md-3 form-group'">
+                                <div class="col-md-3 form-group" th:class="${#fields.hasErrors()} and ${#fields.hasErrors('url')} ? 'col-md-3 form-group alert-warning' : 'col-md-3 form-group'">
                                     <label>URL:</label>
-                                    <input type="text" class="form-control" th:field="*{url}"/>
-                                    <span class="help-block" th:if="${#fields.hasErrors('url')}">
+                                    <!--th:field="*{url}"-->
+                                    <input type="text" class="form-control" th:id="url" th:name="url" th:value="${recipe.url}"/>
+                                    <span class="help-block" th:if="${#fields.hasErrors('*')} and ${#fields.errors('url')}">
                                         <ul>
                                             <li th:each="err : ${#fields.errors('url')}" th:text="${err}"/>
                                         </ul>
-                                    </span>
                                 </div>
                             </div>
                         </dvi>
@@ -184,10 +181,10 @@
                     <div class="card card-primary card-inverse">
                         <div class="card-header">
                             <div class="row">
-                                <div class="col-md-11">
+                                <div class="col-md-10">
                                     <h1 class="panel-title">Ingredients</h1>
                                 </div>
-                                <div class="col-md-1">
+                                <div class="col-md-2">
                                     <a class="btn btn-primary" href="#" th:href="@{'/recipe/' + ${recipe.id} + '/ingredients'}" role="button">View</a>
                                 </div>
                             </div>
@@ -206,13 +203,18 @@
                                 </ul>
                                 <!-- Rebind the field for mongo db manually -->
                                 <div th:each="ingredientEach, idx : ${recipe.ingredients}">
-                                    <input type="hidden" th:field="*{ingredients[__${idx.index}__].id}" />
-                                    <input type="hidden" th:field="*{ingredients[__${idx.index}__].description}" />
-                                    <input type="hidden" th:field="*{ingredients[__${idx.index}__].amount}" />
-                                    <input type="hidden" th:field="*{ingredients[__${idx.index}__].uom.id}" />
+                                    <!--th:field="*{ingredients[__${idx.index}__].id}"-->
+                                    <input type="hidden" th:id="ingredients__${idx.index}__.id" th:name="ingredients[__${idx.index}__].id" th:value="${recipe.ingredients[__${idx.index}__].id}"/>
+                                    <!--th:field="*{ingredients[__${idx.index}__].description}"-->
+                                    <input type="hidden" th:id="ingredients__${idx.index}__.description" th:name="ingredients[__${idx.index}__].description" th:value="${recipe.ingredients[__${idx.index}__].description}"/>
+                                    <!--th:field="*{ingredients[__${idx.index}__].amount}"-->
+                                    <input type="hidden" th:id="ingredients__${idx.index}__.amount" th:name="ingredients[__${idx.index}__].amount" th:value="${recipe.ingredients[__${idx.index}__].amount}" />
+                                    <!--th:field="*{ingredients[__${idx.index}__].uom.id}"-->
+                                    <input type="hidden" th:id="ingredients__${idx.index}__.uom.id" th:name="ingredients[__${idx.index}__].uom.id" th:value="${recipe.ingredients[__${idx.index}__].uom.id}" />
                                 </div>
                                 <div th:each="catEach, idx : ${recipe.categories}">
-                                    <input type="hidden" th:field="*{categories[__${idx.index}__].id}" />
+                                    <!--th:field="*{categories[__${idx.index}__].id}"-->
+                                    <input type="hidden" th:id="categories__${idx.index}__.id" th:name="categories[__${idx.index}__].id" th:value="${recipe.categories[__${idx.index}__].id}"/>
                                 </div>
                             </div>
                         </div>
@@ -224,9 +226,10 @@
                         </div>
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-md-12 form-group" th:class="${#fields.hasErrors('directions')} ? 'col-md-12 form-group has-error' : 'col-md-12 form-group'">
-                                    <textarea class="form-control" rows="3" th:field="*{directions}"></textarea>
-                                    <span class="help-block" th:if="${#fields.hasErrors('directions')}">
+                                <div class="col-md-12 form-group" th:class="${#fields.hasErrors()} and ${#fields.hasErrors('directions')} ? 'col-md-12 form-group alert-warning' : 'col-md-12 form-group'">
+                                    <!--th:field="*{directions}"-->
+                                    <textarea class="form-control" rows="3" th:id="directions" th:name="directions" th:text="${recipe.directions}"></textarea>
+                                    <span class="help-block" th:if="${#fields.hasErrors('*')} and ${#fields.errors('directions')}"
                                         <ul>
                                             <li th:each="err : ${#fields.errors('directions')}" th:text="${err}"/>
                                         </ul>
@@ -242,7 +245,9 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-12 form-group">
-                                    <textarea class="form-control" rows="3" th:field="*{notes.recipeNotes}"></textarea>
+                                    <input type="hidden" th:id="notes.id" th:name="notes.id" th:value="*{notes.id}"/>
+                                    <!--th:field="*{notes.recipeNotes}"-->
+                                    <textarea class="form-control" rows="3" th:id="notes.recipeNotes" th:name="notes.recipeNotes" th:value="*{notes.recipeNotes}" th:text="*{notes.recipeNotes}"></textarea>
                                 </div>
                             </div>
                         </div>

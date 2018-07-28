@@ -8,8 +8,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
+import reactor.core.publisher.Mono;
+//import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.util.UUID;
@@ -22,8 +24,16 @@ public class RecipeController {
     private static final String RECIPE_RECIPEFORM_URL = "recipe/recipeform";
     private final RecipeService recipeService;
 
+    // Fix the validation problem for webflux
+    private WebDataBinder webDataBinder;
+
     public RecipeController(RecipeService recipeService) {
         this.recipeService = recipeService;
+    }
+
+    @InitBinder
+    public void initBinder(WebDataBinder webDataBinder){
+        this.webDataBinder = webDataBinder;
     }
 
     @RequestMapping("recipe/{id}/show")
@@ -35,7 +45,7 @@ public class RecipeController {
         //log.debug(Long.toHexString(tmp));
         log.debug(Long.toHexString(Long.parseUnsignedLong(id.substring(0, id.length()>16? 16 : id.length()),16)));
 
-        model.addAttribute("recipe", recipeService.findById(id).block());
+        model.addAttribute("recipe", recipeService.findById(id));//.block()
 
         // parent or container represent each child (id)
         return "recipe/show";
@@ -44,35 +54,41 @@ public class RecipeController {
     //TODO: implement this?
     @RequestMapping("recipe/new")
     public String newRecipe(Model model) {
-        model.addAttribute("recipe", new RecipeCommand());
+
+        model.addAttribute("recipe", recipeService.newRecipeCommand());
         return RECIPE_RECIPEFORM_URL;
     }
 
     @RequestMapping("recipe/{id}/update")
     public String updateRecipe(@PathVariable String id, Model model) {
-        /*
-        RecipeCommand command = recipeService.findCommandById(Long.valueOf(id));
 
-        for(IngredientCommand ingredient : command.getIngredients()) {
-            String desc = ingredient.getUom().getDescription();
-        }
-        */
-        model.addAttribute("recipe", recipeService.findCommandById(id).block());
+        model.addAttribute("recipe", recipeService.findCommandById(id));//findCommandById(id).block()
         return "recipe/recipeform";
     }
 
+    //NOTE: @Valid bail out before return RECIPE_RECIPEFORM_URL, and send the error message directly to user
 
     @PostMapping("recipe")
-    public String saveOrUpdate(@Valid @ModelAttribute("recipe") RecipeCommand command, BindingResult bindingResult) {
+    public String saveOrUpdate(/*@Valid */@ModelAttribute("recipe") RecipeCommand command) {
+
+        //Fix the validation problem for webflux
+        webDataBinder.validate();
+        BindingResult bindingResult = webDataBinder.getBindingResult();
+
         if (bindingResult.hasErrors()) {
             bindingResult.getAllErrors().forEach(objectError -> {log.debug(objectError.toString());});
+            //model.addAttribute("recipe", command);//Fix #fileds
             return RECIPE_RECIPEFORM_URL;
         }
 
+        Mono<RecipeCommand> savedCommand = recipeService.saveRecipeCommand(command);
 
-        RecipeCommand savedCommand = recipeService.saveRecipeCommand(command).block();
+        savedCommand.subscribe(cmd->{
+            log.debug("Saved Recipe Id: " + cmd.getId());
+            command.setId(cmd.getId());
+        });
 
-        return "redirect:/recipe/" + savedCommand.getId() + "/show";
+        return "redirect:/recipe/" + command.getId() + "/show";
     }
 
 
@@ -85,18 +101,24 @@ public class RecipeController {
     }
 
 
-    @ResponseStatus(HttpStatus.NOT_FOUND) //send 404 instead of 200
-    @ExceptionHandler(NotFoundException.class)
-    public ModelAndView handleNotFound(Exception exception) {
-        log.error("Handling not found exception");
-        log.error(exception.getMessage());
-
-        ModelAndView modelAndView = new ModelAndView();
-
-        modelAndView.setViewName("404error");
-        modelAndView.addObject("exception", exception);
-
-        return modelAndView;
-    }
+//    @ResponseStatus(HttpStatus.NOT_FOUND) //send 404 instead of 200
+//    @ExceptionHandler(NotFoundException.class)
+//    public ModelAndView handleNotFound(Exception exception) {
+//        log.error("Handling not found exception");
+//        log.error(exception.getMessage());
+//
+//        ModelAndView modelAndView = new ModelAndView();
+//
+//        modelAndView.setViewName("404error");
+//        modelAndView.addObject("exception", exception);
+//
+//        return modelAndView;
+//    }
 
 }
+
+/*
+Fix: WebDataBinder webDataBinder;
+Problem:
+Java.lang.IllegalStateException: Failed to resolve argument 1 of type 'org.springframework.validation.BindingResult' on public java.lang.String guru.springframework.controllers.RecipeController.saveOrUpdate(guru.springframework.commands.RecipeCommand,org.springframework.validation.BindingResult)
+ */

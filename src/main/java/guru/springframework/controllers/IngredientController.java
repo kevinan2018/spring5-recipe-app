@@ -30,7 +30,7 @@ public class IngredientController {
         log.debug("Getting ingredient list for recipe id: " + recipeId);
 
         // use command object to avoid lazy load errors in Thymeleaf.
-        model.addAttribute("recipe", recipeService.findCommandById(recipeId).block());
+        model.addAttribute("recipe", recipeService.findCommandById(recipeId));//.block()
 
         return "recipe/ingredient/list";
     }
@@ -38,7 +38,7 @@ public class IngredientController {
     @GetMapping("/recipe/{recipeId}/ingredient/{id}/show")
     public String showRecipeIngredient(@PathVariable String recipeId,
                                        @PathVariable String id, Model model) {
-        model.addAttribute("ingredient", ingredientService.findByRecipeIdAndIngredientId(recipeId, id).block());
+        model.addAttribute("ingredient", ingredientService.findByRecipeIdAndIngredientId(recipeId, id));//.block()
 
         return "recipe/ingredient/show";
     }
@@ -46,8 +46,8 @@ public class IngredientController {
     @GetMapping("/recipe/{recipeId}/ingredient/{id}/update")
     public String updateRecipeIngredient(@PathVariable String recipeId,
                                          @PathVariable String id, Model model){
-        model.addAttribute("ingredient", ingredientService.findByRecipeIdAndIngredientId(recipeId, id).block());
-        model.addAttribute("uomList", unitOfMeasureService.listAllUoms().collectList().block());
+        model.addAttribute("ingredient", ingredientService.findByRecipeIdAndIngredientId(recipeId, id));//.block()
+        model.addAttribute("uomList", unitOfMeasureService.listAllUoms());//.collectList().block()
         return "recipe/ingredient/ingredientform";
     }
 
@@ -55,25 +55,38 @@ public class IngredientController {
     public String deleteRecipeIngredient(@PathVariable String recipeId,
                                          @PathVariable String id){
         //delete reference from recipe's ingredient list, the ingredient still exists inside of ingredient repository
-        ingredientService.deleteByRecipeIdAndIngredientId(recipeId, id);
+        ingredientService.deleteByRecipeIdAndIngredientId(recipeId, id).subscribe(
+                recipe -> log.debug("Delete ingredient " + id)
+        );
 
         return "redirect:/recipe/" + recipeId + "/ingredients";
     }
 
     @PostMapping("/recipe/{recipeId}/ingredient")
-    public String saveOrUpdate(@ModelAttribute IngredientCommand command) {
-        IngredientCommand savedCommand = ingredientService.saveIngredientCommand(command).block();
+    public String saveOrUpdate(@ModelAttribute IngredientCommand command, Model model) {
 
-        log.debug("saved recipe id:" + savedCommand.getRecipeId());
-        log.debug("saved ingredient id:" + savedCommand.getId());
+        // NOTE; Model addAttribute triggers the operations
+        model.addAttribute("ingredient",  ingredientService.saveIngredientCommand(command));
+        return "recipe/ingredient/show";
 
-        return "redirect:/recipe/" + savedCommand.getRecipeId() + "/ingredient/" + savedCommand.getId() + "/show";
+//        Mono<IngredientCommand> ingredientCommandMono = ingredientService.saveIngredientCommand(command);
+//
+//        ingredientCommandMono.subscribe(cmd -> {
+//            // set ingredient id
+//            command.setId(cmd.getId());
+//
+//            log.debug("saved recipe id:" + cmd.getRecipeId());
+//            log.debug("saved ingredient id:" + cmd.getId());
+//
+//        });
+//        return "redirect:/recipe/" + command.getRecipeId() + "/ingredient/" + command.getId() + "/show";
+
     }
 
     @GetMapping("recipe/{recipeId}/ingredient/new")
     public String newRecipe(@PathVariable String recipeId, Model model) {
         //TODO: check reicipe id
-        RecipeCommand recipeCommand = recipeService.findCommandById(recipeId).block();
+        //RecipeCommand recipeCommand = recipeService.findCommandById(recipeId).block();
 
         //need to return back parent id for hidden form prperty
         IngredientCommand ingredientCommand = new IngredientCommand();
@@ -82,7 +95,8 @@ public class IngredientController {
         //init uom
         ingredientCommand.setUom(new UnitOfMeasureCommand());
 
-        model.addAttribute("uomList", unitOfMeasureService.listAllUoms().collectList().block());
+        model.addAttribute("recipe", ingredientCommand);
+        model.addAttribute("uomList", unitOfMeasureService.listAllUoms());//.collectList().block()
 
         return "recipe/ingredient/ingredientform";
     }

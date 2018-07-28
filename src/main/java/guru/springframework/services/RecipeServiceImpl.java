@@ -7,6 +7,7 @@ import guru.springframework.converters.CategoryToCategoryCommand;
 import guru.springframework.converters.RecipeCommandToRecipe;
 import guru.springframework.converters.RecipeToRecipeCommand;
 import guru.springframework.domain.Category;
+import guru.springframework.domain.Notes;
 import guru.springframework.domain.Recipe;
 import guru.springframework.exceptions.NotFoundException;
 import guru.springframework.repositories.reactive.CategoryReactiveRepository;
@@ -55,14 +56,15 @@ public class RecipeServiceImpl implements RecipeService {
     @Override
     public Mono<Recipe> findById(String l) {
 
-        Optional<Recipe> recipeOptional = recipeReactiveRepository.findById(l).blockOptional();
-        if (!recipeOptional.isPresent()) {
+        //Optional<Recipe> recipeOptional = recipeReactiveRepository.findById(l).blockOptional();
+        Mono<Recipe> recipeMono = recipeReactiveRepository.findById(l);
+        if (recipeMono.equals(Mono.empty())) {
             //throw new RuntimeException("recipe not found");
             throw new NotFoundException("Recipe Not Found. Recipe Id: " + l);
         }
-        return Mono.just(recipeOptional.get());
+        return recipeMono;
 
-        //return recipeReactiveRepository.findById(l);
+
     }
 
     @Override
@@ -79,7 +81,6 @@ public class RecipeServiceImpl implements RecipeService {
                     return recipeCommand;
                 }); //map return Mono<T>
 
-        //return recipeToRecipeCommand.convert(findById(l).block());
     }
 
     @Override
@@ -103,4 +104,10 @@ public class RecipeServiceImpl implements RecipeService {
         recipeReactiveRepository.deleteById(idToDelete).block();
     }
 
+    @Override
+    public Mono<RecipeCommand> newRecipeCommand() {
+        Recipe recipe = new Recipe();
+        recipe.setNotes(new Notes());//note id
+        return Mono.just(recipeToRecipeCommand.convert(recipe));
+    }
 }
