@@ -22,12 +22,15 @@
 </head>
 <body>
 <!--/*@thymesVar id="ingredient" type="guru.springframework.commands.IngredientCommand"*/-->
-<!--/*@thymesVar id="uomList" type="java.util.Set<guru.springframework.commands.UnitOfMeasureCommand>"*/-->
+<!--/*@thymesVar id="uomList" type="java.util.List<guru.springframework.commands.UnitOfMeasureCommand>"*/-->
 <div class="container-fluid" style="margin-top: 20px">
     <div class="row">
         <div class="col-md-6 offset-md-3">
             <form th:object="${ingredient}" th:action="@{'/recipe/' + ${ingredient.getRecipeId()} + '/ingredient'}" method="post">
                 <!--th:field="*{id}"-->
+                <div th:if="${#fields.hasErrors()}" class="alert alert-danger">
+                    <p>Please Correct Errors Below</p>
+                </div>
                 <input type="hidden" th:id="id" th:name="id" th:value="*{id}"/>
                 <input type="hidden" th:id="recipeId" th:name="recipeId" th:value="*{recipeId}"/>
                 <div class="card card-primary card-inverse">
@@ -36,15 +39,27 @@
                     </div>
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-md-3 form-group">
+                            <div class="col-md-3 form-group" th:class="${#fields.hasErrors()} and ${#fields.hasErrors('description')}
+                                ? 'col-md-3 form-group alert-warning' : 'col-md-3 form-group'">
                                 <label>Description:</label>
                                 <!--th:field="*{description}"-->
-                                <input type="text" class="form-control" th:id="description" th:name="description" th:value="*{description}"/>
+                                <input type="text" class="form-control" th:id="description" th:name="description" th:value="*{description}" />
+                                <span class="help-block" th:if="${#fields.hasErrors()} and ${#fields.hasErrors('description')}">
+                                    <ul>
+                                        <li th:each="err : ${#fields.errors('description')}" th:text="${err}"/>
+                                    </ul>
+                                </span>
                             </div>
-                            <div class="col-md-3 form-group">
+                            <div class="col-md-3 form-group" th:class="${#fields.hasErrors()} and ${#fields.hasErrors('amount')}
+                                ? 'col-md-3 form-group alert-warning' : 'col-md-3 form-group'">
                                 <label>Amount:</label>
                                 <!--th:field="*{amount}"-->
-                                <input type="number" class="form-control" th:id="amount" th:name="amount" th:value="*{amount}"/>
+                                <input type="number" class="form-control" th:id="amount" th:name="amount" th:value="*{amount}"/>-
+                                <span class="help-block" th:if="${#fields.hasErrors()} and ${#fields.hasErrors('amount')}">
+                                    <ul>
+                                        <li th:each="err : ${#fields.errors('amount')}" th:text="${err}"/>
+                                    </ul>
+                                </span>
                             </div>
 
                             <div class="col-md-3 form-group">

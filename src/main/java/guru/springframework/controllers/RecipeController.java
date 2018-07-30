@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.thymeleaf.exceptions.TemplateInputException;
 import reactor.core.publisher.Mono;
 //import org.springframework.web.servlet.ModelAndView;
 
@@ -43,7 +44,7 @@ public class RecipeController {
         //log.debug("input: "  + id);
         //long tmp = Long.parseUnsignedLong(id.substring(0,16),16);
         //log.debug(Long.toHexString(tmp));
-        log.debug(Long.toHexString(Long.parseUnsignedLong(id.substring(0, id.length()>16? 16 : id.length()),16)));
+        //log.debug(Long.toHexString(Long.parseUnsignedLong(id.substring(0, id.length()>16? 16 : id.length()),16)));
 
         model.addAttribute("recipe", recipeService.findById(id));//.block()
 
@@ -63,7 +64,7 @@ public class RecipeController {
     public String updateRecipe(@PathVariable String id, Model model) {
 
         model.addAttribute("recipe", recipeService.findCommandById(id));//findCommandById(id).block()
-        return "recipe/recipeform";
+        return RECIPE_RECIPEFORM_URL;
     }
 
     //NOTE: @Valid bail out before return RECIPE_RECIPEFORM_URL, and send the error message directly to user
@@ -77,7 +78,7 @@ public class RecipeController {
 
         if (bindingResult.hasErrors()) {
             bindingResult.getAllErrors().forEach(objectError -> {log.debug(objectError.toString());});
-            //model.addAttribute("recipe", command);//Fix #fileds
+
             return RECIPE_RECIPEFORM_URL;
         }
 
@@ -101,19 +102,16 @@ public class RecipeController {
     }
 
 
-//    @ResponseStatus(HttpStatus.NOT_FOUND) //send 404 instead of 200
-//    @ExceptionHandler(NotFoundException.class)
-//    public ModelAndView handleNotFound(Exception exception) {
-//        log.error("Handling not found exception");
-//        log.error(exception.getMessage());
-//
-//        ModelAndView modelAndView = new ModelAndView();
-//
-//        modelAndView.setViewName("404error");
-//        modelAndView.addObject("exception", exception);
-//
-//        return modelAndView;
-//    }
+    @ResponseStatus(HttpStatus.NOT_FOUND) //send 404 instead of 200
+    @ExceptionHandler({NotFoundException.class, TemplateInputException.class})
+    public String handleNotFound(Exception exception, Model model) {
+        log.error("Handling not found exception");
+        log.error(exception.getMessage());
+
+        model.addAttribute("exception", exception);
+
+        return "404error";
+    }
 
 }
 

@@ -27,6 +27,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+//TODO
+@Ignore
 public class ImageControllerTest {
     @Mock
     ImageService imageService;
@@ -48,7 +50,6 @@ public class ImageControllerTest {
                 .build();
     }
 
-    @Ignore
     @Test
     public void getImageFormTest() throws Exception {
         //given
@@ -65,8 +66,6 @@ public class ImageControllerTest {
         verify(recipeService, times(1)).findCommandById(anyString());
     }
 
-    //TODO
-    @Ignore
     @Test
     public void handleImagePostTest() throws Exception {
 //        MockMultipartFile multipartFile = new MockMultipartFile("imagefile", "testing.txt", "text/plain", "Spring Framework Guru".getBytes());
@@ -80,8 +79,6 @@ public class ImageControllerTest {
 //        verify(imageService, times(1)).saveImageFile(anyString(), any());
     }
 
-    //TODO
-    @Ignore
     @Test
     public void renderImageFromDBTest() throws Exception {
 
@@ -113,7 +110,6 @@ public class ImageControllerTest {
 
     }
 
-    @Ignore
     @Test
     public void getImageNumberFormatException() throws Exception {
         mockMvc.perform(get("/recipe/asdf/recipeimage"))

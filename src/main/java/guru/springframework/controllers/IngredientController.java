@@ -3,26 +3,42 @@ package guru.springframework.controllers;
 import guru.springframework.commands.IngredientCommand;
 import guru.springframework.commands.RecipeCommand;
 import guru.springframework.commands.UnitOfMeasureCommand;
+import guru.springframework.exceptions.NotFoundException;
 import guru.springframework.services.IngredientService;
 import guru.springframework.services.RecipeService;
 import guru.springframework.services.UnitOfMeasureService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Controller
 public class IngredientController {
+
+    private final String INTREDIENT_INTREDIENTFORM_URL = "recipe/ingredient/ingredientform";
     private final RecipeService recipeService;
     private final IngredientService ingredientService;
     private final UnitOfMeasureService unitOfMeasureService;
+
+    private WebDataBinder webDataBinder;
 
     public IngredientController(RecipeService recipeService, IngredientService ingredientService, UnitOfMeasureService unitOfMeasureService) {
         this.recipeService = recipeService;
         this.ingredientService = ingredientService;
         this.unitOfMeasureService = unitOfMeasureService;
+    }
+
+    @InitBinder("ingredient")
+    public void initBinder(WebDataBinder webDataBinder) {
+        this.webDataBinder= webDataBinder;
     }
 
     @GetMapping("/recipe/{recipeId}/ingredients")
@@ -38,7 +54,7 @@ public class IngredientController {
     @GetMapping("/recipe/{recipeId}/ingredient/{id}/show")
     public String showRecipeIngredient(@PathVariable String recipeId,
                                        @PathVariable String id, Model model) {
-        model.addAttribute("ingredient", ingredientService.findByRecipeIdAndIngredientId(recipeId, id));//.block()
+        model.addAttribute("ingredient", ingredientService.findByRecipeIdAndIngredientId(recipeId, id));
 
         return "recipe/ingredient/show";
     }
@@ -46,9 +62,8 @@ public class IngredientController {
     @GetMapping("/recipe/{recipeId}/ingredient/{id}/update")
     public String updateRecipeIngredient(@PathVariable String recipeId,
                                          @PathVariable String id, Model model){
-        model.addAttribute("ingredient", ingredientService.findByRecipeIdAndIngredientId(recipeId, id));//.block()
-        model.addAttribute("uomList", unitOfMeasureService.listAllUoms());//.collectList().block()
-        return "recipe/ingredient/ingredientform";
+        model.addAttribute("ingredient", ingredientService.findByRecipeIdAndIngredientId(recipeId, id));
+        return INTREDIENT_INTREDIENTFORM_URL;
     }
 
     @GetMapping("/recipe/{recipeId}/ingredient/{id}/delete")
@@ -63,14 +78,22 @@ public class IngredientController {
     }
 
     @PostMapping("/recipe/{recipeId}/ingredient")
-    public String saveOrUpdate(@ModelAttribute IngredientCommand command, Model model) {
+    public Mono<String> saveOrUpdate(@ModelAttribute("ingredient") IngredientCommand command, Model model) {
 
-        // NOTE; Model addAttribute triggers the operations
-        model.addAttribute("ingredient",  ingredientService.saveIngredientCommand(command));
-        return "recipe/ingredient/show";
+        webDataBinder.validate();
+        BindingResult bindingResult = webDataBinder.getBindingResult();
 
-//        Mono<IngredientCommand> ingredientCommandMono = ingredientService.saveIngredientCommand(command);
-//
+        if (bindingResult.hasErrors()) {
+            bindingResult.getAllErrors().forEach(objectError -> {log.debug(objectError.toString());});
+
+            //model.addAttribute("uomList", unitOfMeasureService.listAllUoms());
+            return Mono.just(INTREDIENT_INTREDIENTFORM_URL);
+        }
+
+        Mono<IngredientCommand> ingredientCommandMono = ingredientService.saveIngredientCommand(command);
+        return ingredientCommandMono
+                .map( cmd -> "redirect:/recipe/" + cmd.getRecipeId() + "/ingredient/" + cmd.getId() + "/show");
+
 //        ingredientCommandMono.subscribe(cmd -> {
 //            // set ingredient id
 //            command.setId(cmd.getId());
@@ -79,25 +102,38 @@ public class IngredientController {
 //            log.debug("saved ingredient id:" + cmd.getId());
 //
 //        });
+//        while(command.getId().isEmpty());
 //        return "redirect:/recipe/" + command.getRecipeId() + "/ingredient/" + command.getId() + "/show";
 
     }
 
     @GetMapping("recipe/{recipeId}/ingredient/new")
-    public String newRecipe(@PathVariable String recipeId, Model model) {
-        //TODO: check reicipe id
-        //RecipeCommand recipeCommand = recipeService.findCommandById(recipeId).block();
+    public Mono<String> newIngredient(@PathVariable String recipeId, Model model) {
+        return recipeService.findCommandById(recipeId)
+                .flatMap(
+                    recipeCommand -> {
+                        //need to return back parent id for hidden form prperty
+                        IngredientCommand ingredientCommand = new IngredientCommand();
+                        ingredientCommand.setRecipeId(recipeId);
+                        model.addAttribute("ingredient", ingredientCommand);
+                        //init uom
+                        ingredientCommand.setUom(new UnitOfMeasureCommand());
 
-        //need to return back parent id for hidden form prperty
-        IngredientCommand ingredientCommand = new IngredientCommand();
-        ingredientCommand.setRecipeId(recipeId);
-        model.addAttribute("ingredient", ingredientCommand);
-        //init uom
-        ingredientCommand.setUom(new UnitOfMeasureCommand());
-
-        model.addAttribute("recipe", ingredientCommand);
-        model.addAttribute("uomList", unitOfMeasureService.listAllUoms());//.collectList().block()
-
-        return "recipe/ingredient/ingredientform";
+                        model.addAttribute("recipe", ingredientCommand);
+                        return Mono.just(INTREDIENT_INTREDIENTFORM_URL);
+                })
+                .switchIfEmpty(Mono.error(new NotFoundException("Recipe Id :" + recipeId + " Not Found")));
     }
+
+    @ModelAttribute("uomList")
+    public Flux<UnitOfMeasureCommand> populateUomList() {
+        return unitOfMeasureService.listAllUoms();
+    }
+
 }
+
+/*
+Fix: @ModelAttribute("ingredient")
+Problem: when validation failed
+org.springframework.expression.spel.SpelEvaluationException: EL1011E: Method call: Attempted to call method getRecipeId() on null context object
+ */

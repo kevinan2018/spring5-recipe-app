@@ -8,8 +8,10 @@ import lombok.extern.slf4j.Slf4j;
 //import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.multipart.FilePart;
+import org.springframework.http.codec.multipart.Part;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Flux;
@@ -18,10 +20,13 @@ import reactor.core.publisher.Mono;
 //import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 @Slf4j
 @Controller
+//@RestController
 public class ImageController {
     private final ImageService imageService;
     private final RecipeService recipeService;
@@ -39,10 +44,19 @@ public class ImageController {
     }
 
     //@RequestMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    //@PostMapping(path = "recipe/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    //public String handleImagePost(@PathVariable String id, @RequestPart("imagefile") Mono<FilePart> file) {
     @PostMapping(path = "recipe/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    //public String handleImagePost(@PathVariable String id, @RequestPart("imagefile") Mono<MultiValueMap<String, Part>> file) {
     public String handleImagePost(@PathVariable String id, @RequestPart("imagefile") Mono<FilePart> file) {
 
-        //file.subscribe(filePart -> log.debug(filePart.filename()));
+//
+//        file.subscribe(filePart -> {
+//            Set<String> keys =  filePart.keySet();
+//            for (String key : keys) {
+//                log.debug(key);
+//            }
+//        });
 
         Mono<Recipe> img = imageService.saveImageFile(id, file);
         img.subscribe(recipe -> {
