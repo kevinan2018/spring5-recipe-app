@@ -7,5 +7,6 @@ import reactor.core.publisher.Mono;
 
 public interface ImageService {
     //Mono<Void> saveImageFile(String recipeId, MultipartFile file);
-    Mono<Recipe> saveImageFile(String recipeId, Mono<FilePart> file);
+    //Mono<Recipe> saveImageFile(String recipeId, Mono<FilePart> file);
+    Mono<Recipe> saveImageFile(String recipeId, FilePart file);
 }

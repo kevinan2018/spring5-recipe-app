@@ -43,6 +43,9 @@ dependencies {
     testCompile('de.flapdoodle.embed:de.flapdoodle.embed.mongo')
     testCompile('io.projectreactor:reactor-test')
     compile('org.springframework.boot:spring-boot-starter-reactor-netty')
+    // https://mvnrepository.com/artifact/org.springframework/spring-web-reactive
+    //compile group: 'org.springframework', name: 'spring-web-reactive', version: '5.0.0.M4'
+
 
     //compile('javax.servlet:javax.servlet-api:4.0.0')
     //compile('com.fasterxml.jackson.jaxrs:jackson-jaxrs-base:2.4.4')

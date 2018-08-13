@@ -24,32 +24,6 @@
 /nbdist/
 /.nb-gradle/
 
-
-Skip to content
-
-    Pull requests
-    Issues
-    Marketplace
-    Explore
-
-    @kevinan2018
-
-1
-5
-
-    95
-
-springframeworkguru/spring5-mongo-recipe-app
-Code
-Issues 0
-Pull requests 0
-Projects 0
-Wiki
-Insights
-spring5-mongo-recipe-app/.gitignore
-de7b07f on Aug 2, 2017
-@springframeworkguru springframeworkguru updating gitignore
-142 lines (118 sloc) 1.83 KB
 ######################
 # Project Specific
 ######################
