@@ -1,7 +1,9 @@
 package guru.springframework.controllers;
 
+import guru.springframework.commands.CategoryCommand;
 import guru.springframework.commands.RecipeCommand;
 import guru.springframework.exceptions.NotFoundException;
+import guru.springframework.services.CategoryService;
 import guru.springframework.services.RecipeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -11,11 +13,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.thymeleaf.exceptions.TemplateInputException;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 //import org.springframework.web.servlet.ModelAndView;
-
-import javax.validation.Valid;
-import java.util.UUID;
 
 
 @Slf4j
@@ -24,12 +24,14 @@ public class RecipeController {
 
     private static final String RECIPE_RECIPEFORM_URL = "recipe/recipeform";
     private final RecipeService recipeService;
+    private final CategoryService categoryService;
 
     // Fix the validation problem for webflux
     private WebDataBinder webDataBinder;
 
-    public RecipeController(RecipeService recipeService) {
+    public RecipeController(RecipeService recipeService, CategoryService categoryService) {
         this.recipeService = recipeService;
+        this.categoryService = categoryService;
     }
 
     @InitBinder
@@ -72,6 +74,9 @@ public class RecipeController {
     @PostMapping("recipe")
     public String saveOrUpdate(/*@Valid */@ModelAttribute("recipe") RecipeCommand command) {
 
+        // sanity check the categories
+        command.getCategories().removeIf(category -> category.getDescription() == null);
+
         //Fix the validation problem for webflux
         webDataBinder.validate();
         BindingResult bindingResult = webDataBinder.getBindingResult();
@@ -113,10 +118,15 @@ public class RecipeController {
         return "404error";
     }
 
+    @ModelAttribute("categoryList")
+    public Flux<CategoryCommand> populateCategoryList() {
+        return categoryService.populateCategoryList();
+    }
+
 }
 
 /*
 Fix: WebDataBinder webDataBinder;
 Problem:
 Java.lang.IllegalStateException: Failed to resolve argument 1 of type 'org.springframework.validation.BindingResult' on public java.lang.String guru.springframework.controllers.RecipeController.saveOrUpdate(guru.springframework.commands.RecipeCommand,org.springframework.validation.BindingResult)
- */
+*/

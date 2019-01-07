@@ -5,6 +5,7 @@ import guru.springframework.converters.RecipeToRecipeCommand;
 import guru.springframework.domain.Recipe;
 import guru.springframework.exceptions.NotFoundException;
 import guru.springframework.repositories.RecipeRepository;
+import guru.springframework.services.CategoryService;
 import guru.springframework.services.RecipeService;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -35,6 +36,8 @@ public class RecipeControllerTest {
 
     @Mock
     RecipeService recipeService;
+    @Mock
+    CategoryService categoryService;
 
     RecipeController controller;
 
@@ -44,7 +47,7 @@ public class RecipeControllerTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
 
-        controller = new RecipeController(recipeService);
+        controller = new RecipeController(recipeService, categoryService);
         mockMvc = MockMvcBuilders.standaloneSetup(controller)
                 .setControllerAdvice(new ControllerExceptionHandler()) //wire the controller advice
                 .build();

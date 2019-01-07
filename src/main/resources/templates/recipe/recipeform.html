@@ -21,6 +21,8 @@
 
 </head>
 <!--/*@thymesVar id="recipe" type="guru.springframework.commands.RecipeCommand"*/-->
+<!--/*@thymesVar id="categoryList" type="java.util.List<guru.springframework.commands.CategoryCommand>"*/-->
+<!--/*@thymesVar id="category" type="guru.springframework.commands.CategoryCommand"*/-->
 <body>
 <div class="container-fluid" style="margin-top: 20px;">
     <div class="row">
@@ -81,24 +83,30 @@
                                         </label>
                                     </div>
                                     <div class="radio" >
-                                        <ul style="list-style: none;" th:if="${not #lists.isEmpty(recipe.categories)}">
-                                            <li th:each="category, idx : ${recipe.categories}">
-                                                <input type="hidden" th:id="categories__${idx.index}__.id" th:name="categories[__${idx.index}__].id" th:value="${category.id}"/>
-                                                <input type="checkbox" checked="true" th:id="categories__${idx.index}__.description" th:name="categories[__${idx.index}__].description" th:value="${category.getDescription()}"/>
+
+                                        <ul style="list-style: none;" th:unless="${#lists.isEmpty(categoryList)}">
+                                            <li th:each="category, idx : ${categoryList}">
+                                                <input type="hidden" th:id="categories__${idx.index}__.id" th:name="recipe.categories[__${idx.index}__].id" th:value="${category.id}"/>
+                                                <input type="checkbox" th:checked="${#lists.contains(recipe.categories, category)}"
+                                                       th:id="categories__${idx.index}__.description" th:name="categories[__${idx.index}__].description" th:value="${category.description}"/>
                                                 <label th:text="${category.description}"></label>
                                             </li>
                                         </ul>
+
+                                        <p th:text="${recipe.categories.clear()}" th:remove="all"></p>
+                                        <p th:text="${recipe.categories.addAll(categoryList)}" th:remove="all"></p>
+
                                         <span class="help-block" th:if="${#fields.hasErrors('*')} and ${#fields.hasErrors('categories')}">
                                         <ul>
                                             <li th:each="err : ${#fields.errors('categories')}" th:text="${err}"/>
                                         </ul>
                                     </span>
-                                        <ul style="list-style: none;" th:if="${#lists.isEmpty(recipe.categories)}">
+                                        <ul style="list-style: none;" th:if="${#lists.isEmpty(categoryList)}">
                                             <li>
                                                 <input type="checkbox" checked="" value=""/>
                                                 <label>TODO Cat1</label>
                                             </li>
-                                            <label>
+                                            <li>
                                                 <input type="checkbox" checked="" value=""/>
                                                 <label>TODO Cat2</label>
                                             </li>
@@ -185,7 +193,7 @@
                                     <h1 class="panel-title">Ingredients</h1>
                                 </div>
                                 <div class="col-md-2">
-                                    <a class="btn btn-primary" href="#" th:href="@{'/recipe/' + ${recipe.id} + '/ingredients'}" role="button">View</a>
+                                    <a th:if="${recipe.id != null}" class="btn btn-primary" href="#" th:href="@{'/recipe/' + ${recipe.id} + '/ingredients'}" role="button">View</a>
                                 </div>
                             </div>
                         </div>
