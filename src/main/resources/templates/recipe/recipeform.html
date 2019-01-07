@@ -86,7 +86,7 @@
 
                                         <ul style="list-style: none;" th:unless="${#lists.isEmpty(categoryList)}">
                                             <li th:each="category, idx : ${categoryList}">
-                                                <input type="hidden" th:id="categories__${idx.index}__.id" th:name="recipe.categories[__${idx.index}__].id" th:value="${category.id}"/>
+                                                <input type="hidden" th:id="categories__${idx.index}__.id" th:name="categories[__${idx.index}__].id" th:value="${category.id}"/>
                                                 <input type="checkbox" th:checked="${#lists.contains(recipe.categories, category)}"
                                                        th:id="categories__${idx.index}__.description" th:name="categories[__${idx.index}__].description" th:value="${category.description}"/>
                                                 <label th:text="${category.description}"></label>
@@ -219,10 +219,8 @@
                                     <input type="hidden" th:id="ingredients__${idx.index}__.amount" th:name="ingredients[__${idx.index}__].amount" th:value="${recipe.ingredients[__${idx.index}__].amount}" />
                                     <!--th:field="*{ingredients[__${idx.index}__].uom.id}"-->
                                     <input type="hidden" th:id="ingredients__${idx.index}__.uom.id" th:name="ingredients[__${idx.index}__].uom.id" th:value="${recipe.ingredients[__${idx.index}__].uom.id}" />
-                                </div>
-                                <div th:each="catEach, idx : ${recipe.categories}">
-                                    <!--th:field="*{categories[__${idx.index}__].id}"-->
-                                    <input type="hidden" th:id="categories__${idx.index}__.id" th:name="categories[__${idx.index}__].id" th:value="${recipe.categories[__${idx.index}__].id}"/>
+                                    <!--th:field="*{ingredients[__${idx.index}__].uom.description}"-->
+                                    <input type="hidden" th:id="ingredients__${idx.index}__.uom.description" th:name="ingredients[__${idx.index}__].uom.description" th:value="${recipe.ingredients[__${idx.index}__].uom.description}" />
                                 </div>
                             </div>
                         </div>
